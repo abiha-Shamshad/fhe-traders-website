@@ -1,0 +1,1377 @@
+/* ==========================================================================
+   FHE Traders — Design System
+   ========================================================================== */
+
+:root {
+  --navy-900: #0a1a30;
+  --navy-800: #0f2544;
+  --navy-700: #17335c;
+  --navy-600: #1e4173;
+  --amber-500: #f5a623;
+  --amber-600: #e0930f;
+  --amber-100: #fef3e0;
+  --green-600: #16a34a;
+  --green-700: #128a3e;
+  --wa-green: #25d366;
+  --wa-green-dark: #1ebe57;
+
+  --bg: #f7f9fc;
+  --surface: #ffffff;
+  --text: #1c2534;
+  --text-muted: #5a6478;
+  --border: #e6eaf0;
+
+  --cat-solar-1: #f7b733; --cat-solar-2: #c9860a;
+  --cat-inverter-1: #2f7bf6; --cat-inverter-2: #1a4fc4;
+  --cat-battery-1: #22c55e; --cat-battery-2: #0f8a3e;
+  --cat-distribution-1: #a855f7; --cat-distribution-2: #6d28d9;
+  --cat-security-1: #f0384a; --cat-security-2: #b91c2c;
+  --cat-appliances-1: #14b8a6; --cat-appliances-2: #0d7d70;
+  --cat-fittings-1: #6366f1; --cat-fittings-2: #4338ca;
+  --cat-stands-1: #78909c; --cat-stands-2: #455a64;
+  --cat-vfd-1: #fb923c; --cat-vfd-2: #c2410c;
+  --cat-fans-1: #22d3ee; --cat-fans-2: #0e7490;
+  --cat-wiring-1: #d97706; --cat-wiring-2: #92400e;
+  --cat-lighting-1: #facc15; --cat-lighting-2: #a16207;
+
+  --red-600: #e11d2f;
+
+  --fab-size: 56px;   /* diameter of every floating action button */
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --shadow-sm: 0 2px 8px rgba(10, 26, 48, 0.06);
+  --shadow-md: 0 8px 24px rgba(10, 26, 48, 0.10);
+  --shadow-lg: 0 20px 48px rgba(10, 26, 48, 0.16);
+
+  --container: 1180px;
+  --header-h: 76px;
+}
+
+/* ---------- Reset ---------- */
+* , *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  color: var(--navy-900);
+  line-height: 1.22;
+  margin: 0 0 0.5em;
+  font-weight: 700;
+}
+p { margin: 0 0 1em; color: var(--text-muted); }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; margin: 0; padding: 0; }
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; }
+svg { display: block; }
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section { padding: 64px 0; }
+.section-top-tight { padding-top: 26px; }
+.section-tight { padding: 44px 0; }
+.section-alt { background: var(--surface); }
+.section-navy {
+  background: linear-gradient(135deg, var(--navy-900), var(--navy-700));
+  color: #fff;
+}
+.section-navy h2, .section-navy h3 { color: #fff; }
+.section-navy p { color: rgba(255,255,255,0.72); }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber-600);
+  background: var(--amber-100);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+.section-navy .eyebrow { background: rgba(245, 166, 35, 0.16); color: var(--amber-500); }
+
+.section-head {
+  max-width: 640px;
+  margin: 0 auto 34px;
+  text-align: center;
+}
+.section-head h2 { font-size: clamp(28px, 4vw, 38px); }
+.section-head p { font-size: 17px; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  border: 2px solid transparent;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary { background: linear-gradient(135deg, var(--amber-500), var(--amber-600)); color: var(--navy-900); box-shadow: 0 8px 20px rgba(245,166,35,0.35); }
+.btn-primary:hover { background: linear-gradient(135deg, var(--amber-600), var(--amber-600)); box-shadow: 0 10px 26px rgba(245,166,35,0.5); }
+.btn-outline { background: transparent; border-color: rgba(255,255,255,0.4); color: #fff; }
+.btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+.btn-outline-dark { background: transparent; border-color: var(--navy-700); color: var(--navy-800); }
+.btn-outline-dark:hover { background: var(--navy-800); color: #fff; }
+.btn-whatsapp {
+  background: var(--wa-green);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(37, 211, 102, 0.35);
+}
+.btn-whatsapp:hover { background: var(--wa-green-dark); }
+.btn-block { width: 100%; }
+.btn-sm { padding: 10px 20px; font-size: 14px; }
+
+/* ---------- Utility bar ---------- */
+.utility-bar {
+  background: var(--navy-900);
+  color: rgba(255,255,255,0.85);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.utility-bar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  flex-wrap: wrap;
+}
+.utility-bar .utility-item { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.utility-bar .utility-item svg { color: var(--amber-500); flex-shrink: 0; }
+.utility-bar a { color: var(--amber-500); font-weight: 700; }
+.utility-bar a:hover { color: #fff; }
+
+/* ---------- Category quick-nav strip ---------- */
+.category-strip {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.category-strip::-webkit-scrollbar { display: none; }
+.category-strip .container { display: flex; gap: 10px; padding-top: 14px; padding-bottom: 14px; }
+.category-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--navy-900);
+  transition: all 0.15s ease;
+}
+.category-chip svg { width: 16px; height: 16px; }
+.category-chip:hover { border-color: var(--amber-500); background: var(--amber-100); }
+.category-chip.cat-solar svg { color: var(--cat-solar-2); }
+.category-chip.cat-inverter svg { color: var(--cat-inverter-2); }
+.category-chip.cat-battery svg { color: var(--cat-battery-2); }
+.category-chip.cat-distribution svg { color: var(--cat-distribution-2); }
+.category-chip.cat-security svg { color: var(--cat-security-2); }
+.category-chip.cat-appliances svg { color: var(--cat-appliances-2); }
+.category-chip.cat-fittings svg { color: var(--cat-fittings-2); }
+.category-chip.cat-stands svg { color: var(--cat-stands-2); }
+.category-chip.cat-vfd svg { color: var(--cat-vfd-2); }
+.category-chip.cat-fans svg { color: var(--cat-fans-2); }
+.category-chip.cat-wiring svg { color: var(--cat-wiring-2); }
+.category-chip.cat-lighting svg { color: var(--cat-lighting-2); }
+
+/* ---------- Header ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  background: rgba(247, 249, 252, 0.88);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  height: var(--header-h);
+}
+.site-header .container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--navy-900);
+  flex-shrink: 0;
+}
+.logo .logo-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--amber-500), var(--amber-600));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy-900);
+  box-shadow: 0 6px 16px rgba(245, 166, 35, 0.4);
+}
+.logo small {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.main-nav { display: flex; align-items: center; gap: 4px; }
+.main-nav a {
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--text);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.main-nav a:hover, .main-nav a.active { background: var(--navy-900); color: #fff; }
+
+.header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.header-actions .btn-whatsapp { padding: 11px 20px; font-size: 14px; margin-left: 4px; }
+
+.icon-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--navy-900);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+.icon-btn:hover { border-color: var(--amber-500); background: var(--amber-100); }
+.icon-btn.active { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
+.icon-badge-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--red-600);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.icon-badge-count[hidden] { display: none; }
+
+/* ---------- Nav dropdown (Categories mega-menu) ---------- */
+.nav-dropdown { position: relative; }
+.nav-dropdown > a { display: flex; align-items: center; gap: 5px; }
+.nav-dropdown > a svg.chev { width: 12px; height: 12px; transition: transform 0.15s ease; }
+.nav-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  width: 460px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(6px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 400;
+}
+.nav-dropdown:hover .nav-dropdown-panel,
+.nav-dropdown.open .nav-dropdown-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.nav-dropdown:hover > a svg.chev, .nav-dropdown.open > a svg.chev { transform: rotate(180deg); }
+.nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text);
+}
+.nav-dropdown-item:hover { background: var(--bg); }
+.nav-dropdown-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+.nav-dropdown-item.cat-solar svg { color: var(--cat-solar-2); }
+.nav-dropdown-item.cat-inverter svg { color: var(--cat-inverter-2); }
+.nav-dropdown-item.cat-battery svg { color: var(--cat-battery-2); }
+.nav-dropdown-item.cat-distribution svg { color: var(--cat-distribution-2); }
+.nav-dropdown-item.cat-security svg { color: var(--cat-security-2); }
+.nav-dropdown-item.cat-appliances svg { color: var(--cat-appliances-2); }
+.nav-dropdown-item.cat-fittings svg { color: var(--cat-fittings-2); }
+.nav-dropdown-item.cat-stands svg { color: var(--cat-stands-2); }
+.nav-dropdown-item.cat-vfd svg { color: var(--cat-vfd-2); }
+.nav-dropdown-item.cat-fans svg { color: var(--cat-fans-2); }
+.nav-dropdown-item.cat-wiring svg { color: var(--cat-wiring-2); }
+.nav-dropdown-item.cat-lighting svg { color: var(--cat-lighting-2); }
+.nav-dropdown-item.view-all { grid-column: 1 / -1; justify-content: center; background: var(--bg); margin-top: 4px; }
+
+/* ---------- Search ---------- */
+.search-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  padding: 18px 0 22px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 450;
+}
+.search-panel.active { opacity: 1; visibility: visible; transform: translateY(0); }
+.search-input-wrap { position: relative; }
+.search-input-wrap svg.search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+.search-input-wrap input {
+  width: 100%;
+  padding: 14px 16px 14px 46px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  font-size: 15px;
+  font-family: inherit;
+  background: var(--bg);
+}
+.search-input-wrap input:focus { outline: none; border-color: var(--amber-500); }
+.search-results { margin-top: 14px; max-height: 360px; overflow-y: auto; display: grid; gap: 4px; }
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+}
+.search-result-item:hover { background: var(--bg); }
+.search-result-thumb {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; flex-shrink: 0;
+}
+.search-result-thumb svg { width: 20px; height: 20px; }
+.search-result-thumb.cat-solar-panels { background: linear-gradient(135deg, var(--cat-solar-1), var(--cat-solar-2)); }
+.search-result-thumb.cat-inverters { background: linear-gradient(135deg, var(--cat-inverter-1), var(--cat-inverter-2)); }
+.search-result-thumb.cat-batteries { background: linear-gradient(135deg, var(--cat-battery-1), var(--cat-battery-2)); }
+.search-result-thumb.cat-distribution { background: linear-gradient(135deg, var(--cat-distribution-1), var(--cat-distribution-2)); }
+.search-result-thumb.cat-security { background: linear-gradient(135deg, var(--cat-security-1), var(--cat-security-2)); }
+.search-result-thumb.cat-appliances { background: linear-gradient(135deg, var(--cat-appliances-1), var(--cat-appliances-2)); }
+.search-result-thumb.cat-fittings { background: linear-gradient(135deg, var(--cat-fittings-1), var(--cat-fittings-2)); }
+.search-result-thumb.cat-solar-stands { background: linear-gradient(135deg, var(--cat-stands-1), var(--cat-stands-2)); }
+.search-result-thumb.cat-vfd { background: linear-gradient(135deg, var(--cat-vfd-1), var(--cat-vfd-2)); }
+.search-result-thumb.cat-fans { background: linear-gradient(135deg, var(--cat-fans-1), var(--cat-fans-2)); }
+.search-result-thumb.cat-wiring { background: linear-gradient(135deg, var(--cat-wiring-1), var(--cat-wiring-2)); }
+.search-result-thumb.cat-lighting { background: linear-gradient(135deg, var(--cat-lighting-1), var(--cat-lighting-2)); }
+.search-result-name { font-weight: 700; font-size: 13.5px; color: var(--navy-900); }
+.search-result-cat { font-size: 12px; color: var(--text-muted); text-transform: capitalize; }
+.search-empty { padding: 20px; text-align: center; color: var(--text-muted); font-size: 14px; }
+
+/* ---------- Floating side toolbar (share / scroll-to-top) ---------- */
+/* Floating action stack. Sits directly on top of the WhatsApp button so the
+   three controls read as one connected column: same diameter, no gaps. */
+.side-toolbar {
+  position: fixed;
+  bottom: calc(26px + var(--fab-size));   /* flush on top of .wa-float */
+  right: 26px;
+  z-index: 590;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.side-toolbar button {
+  width: var(--fab-size); height: var(--fab-size);
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--navy-900);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-md);
+  pointer-events: auto;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+/* Hidden buttons are removed from layout, not just faded — otherwise the
+   scroll-top button (hidden until you scroll) leaves a hole in the stack. */
+.side-toolbar button:not(.visible) { display: none; }
+.side-toolbar button:hover { background: var(--amber-100); border-color: var(--amber-500); }
+
+/* ---------- Homepage category merchandising block ---------- */
+.cat-block { padding: 40px 0; border-top: 1px solid var(--border); }
+.cat-block-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 22px; flex-wrap: wrap; }
+.cat-block-head h3 { font-size: 22px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+.cat-block-head .icon-badge { margin-bottom: 0; width: 40px; height: 40px; }
+.cat-block-head p { margin-bottom: 0; font-size: 14px; }
+.cat-block-head a { font-weight: 700; font-size: 13.5px; color: var(--navy-900); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+
+.nav-toggle {
+  display: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+}
+.nav-toggle span { width: 20px; height: 2px; background: var(--navy-900); border-radius: 2px; transition: all 0.2s ease; }
+.nav-toggle.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle.active span:nth-child(2) { opacity: 0; }
+.nav-toggle.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(1200px 600px at 85% -10%, rgba(245,166,35,0.18), transparent 60%),
+              linear-gradient(160deg, var(--navy-900) 0%, var(--navy-800) 55%, var(--navy-700) 100%);
+  color: #fff;
+  padding: 96px 0 110px;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: center;
+}
+.hero h1 { color: #fff; font-size: clamp(34px, 5vw, 54px); }
+.hero h1 .accent { color: var(--amber-500); }
+.hero p.lead { color: rgba(255,255,255,0.78); font-size: 18px; max-width: 520px; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 32px; }
+.hero-meta {
+  display: flex;
+  gap: 28px;
+  margin-top: 44px;
+  flex-wrap: wrap;
+}
+.hero-meta div { display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.75); font-weight: 600; }
+.hero-meta svg { color: var(--amber-500); flex-shrink: 0; }
+
+.hero-art { position: relative; }
+.hero-art svg { width: 100%; height: auto; }
+
+/* ---------- Feature / Icon Cards ---------- */
+.grid { display: grid; gap: 20px; }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-5 { grid-template-columns: repeat(5, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 32px 28px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); border-color: transparent; }
+
+.icon-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--amber-100);
+  color: var(--amber-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.icon-badge.navy { background: var(--navy-900); color: var(--amber-500); }
+.icon-badge.green { background: rgba(22,163,74,0.12); color: var(--green-600); }
+
+.feature-card h3 { font-size: 19px; margin-bottom: 8px; }
+.feature-card p { font-size: 14.5px; margin-bottom: 0; }
+
+/* ---------- Service Cards (Home preview + Services page) ---------- */
+.service-card { display: flex; flex-direction: column; height: 100%; }
+.service-card .icon-badge { margin-bottom: 18px; }
+.service-card h3 { font-size: 20px; }
+.service-card p { flex-grow: 1; }
+.service-card .btn { align-self: flex-start; margin-top: 12px; }
+.service-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green-600);
+  background: rgba(22,163,74,0.1);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  width: fit-content;
+}
+
+/* ---------- Product Grid ---------- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+/* Compact chips so all thirteen categories fit without clipping any of them.
+   An earlier single scrolling row hid the last few with no affordance —
+   wrapping is better here: a filter set should show every option at once. */
+.filter-bar .filter-btn { flex: 0 0 auto; white-space: nowrap; }
+.filter-btn {
+  padding: 7px 12px;
+  font-size: 13px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+.filter-btn:hover { border-color: var(--amber-500); color: var(--navy-900); }
+.filter-btn.active { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
+
+.product-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.product-card:hover { transform: translateY(-6px) scale(1.01); box-shadow: var(--shadow-lg); border-color: transparent; }
+.product-thumb {
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, var(--navy-800), var(--navy-600));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.92);
+  position: relative;
+  overflow: hidden;
+}
+.product-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120px 90px at 25% 15%, rgba(255,255,255,0.22), transparent 70%);
+}
+.product-thumb svg { width: 42%; height: 42%; position: relative; z-index: 1; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.18)); }
+.product-card:hover .product-thumb svg { transform: scale(1.08); transition: transform 0.25s ease; }
+
+/* Category-coded thumbnails — gives each line its own retail-shelf color */
+.product-card[data-category="solar-panels"] .product-thumb,
+.gallery-item[data-category="solar-panels"] { background: linear-gradient(135deg, var(--cat-solar-1), var(--cat-solar-2)); }
+.product-card[data-category="inverters"] .product-thumb,
+.gallery-item[data-category="inverters"] { background: linear-gradient(135deg, var(--cat-inverter-1), var(--cat-inverter-2)); }
+.product-card[data-category="batteries"] .product-thumb,
+.gallery-item[data-category="batteries"] { background: linear-gradient(135deg, var(--cat-battery-1), var(--cat-battery-2)); }
+.product-card[data-category="distribution"] .product-thumb,
+.gallery-item[data-category="distribution"] { background: linear-gradient(135deg, var(--cat-distribution-1), var(--cat-distribution-2)); }
+.product-card[data-category="security"] .product-thumb,
+.gallery-item[data-category="security"] { background: linear-gradient(135deg, var(--cat-security-1), var(--cat-security-2)); }
+.product-card[data-category="appliances"] .product-thumb,
+.gallery-item[data-category="appliances"] { background: linear-gradient(135deg, var(--cat-appliances-1), var(--cat-appliances-2)); }
+.product-card[data-category="fittings"] .product-thumb,
+.gallery-item[data-category="fittings"] { background: linear-gradient(135deg, var(--cat-fittings-1), var(--cat-fittings-2)); }
+.product-card[data-category="solar-stands"] .product-thumb,
+.gallery-item[data-category="solar-stands"] { background: linear-gradient(135deg, var(--cat-stands-1), var(--cat-stands-2)); }
+.product-card[data-category="vfd"] .product-thumb,
+.gallery-item[data-category="vfd"] { background: linear-gradient(135deg, var(--cat-vfd-1), var(--cat-vfd-2)); }
+.product-card[data-category="fans"] .product-thumb,
+.gallery-item[data-category="fans"] { background: linear-gradient(135deg, var(--cat-fans-1), var(--cat-fans-2)); }
+.product-card[data-category="wiring"] .product-thumb,
+.gallery-item[data-category="wiring"] { background: linear-gradient(135deg, var(--cat-wiring-1), var(--cat-wiring-2)); }
+.product-card[data-category="lighting"] .product-thumb,
+.gallery-item[data-category="lighting"] { background: linear-gradient(135deg, var(--cat-lighting-1), var(--cat-lighting-2)); }
+
+.product-category-pill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(10,16,28,0.55);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 999px;
+  z-index: 1;
+}
+.product-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--red-600);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 999px;
+  z-index: 1;
+  box-shadow: 0 4px 10px rgba(225,29,47,0.4);
+}
+.product-badge.badge-new { background: var(--green-600); box-shadow: 0 4px 10px rgba(22,163,74,0.4); }
+.product-badge.badge-popular { background: var(--amber-600); box-shadow: 0 4px 10px rgba(224,147,15,0.4); }
+
+.product-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
+.product-body h3 { font-size: 16px; margin-bottom: 2px; }
+.product-body p { font-size: 13px; margin-bottom: 10px; }
+/* The description absorbs the leftover space, so everything after it — the
+   "N options available" hint and the button row — is pinned to the bottom of
+   the card. Cards in a row are equal height, so those all line up even when
+   the descriptions run to different lengths. */
+.product-body > p:not(.product-model-hint) { flex-grow: 1; margin-bottom: 10px; }
+.product-actions { display: flex; gap: 8px; margin-top: 0; }
+.product-actions .btn { flex: 1; margin-top: 0; }
+/* Still needed for cards whose button is a direct child (home page, related). */
+.product-body > .btn { margin-top: auto; }
+
+/* ---------- Gallery ---------- */
+.gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.gallery-item {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: linear-gradient(135deg, var(--navy-800), var(--navy-600));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.85);
+  cursor: pointer;
+}
+.gallery-item svg { width: 34%; height: 34%; }
+.gallery-caption {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 16px;
+  background: linear-gradient(180deg, transparent, rgba(10,26,48,0.88));
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,16,28,0.92);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 40px;
+}
+.lightbox.active { display: flex; }
+.lightbox-inner {
+  background: var(--navy-900);
+  border-radius: var(--radius-lg);
+  max-width: 640px;
+  width: 100%;
+  padding: 40px;
+  text-align: center;
+  color: #fff;
+  position: relative;
+}
+.lightbox-inner svg { width: 120px; height: 120px; margin: 0 auto 20px; color: var(--amber-500); }
+.lightbox-close {
+  position: absolute;
+  top: 18px; right: 18px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------- Blog ---------- */
+.blog-card { display: flex; flex-direction: column; overflow: hidden; }
+.blog-thumb {
+  aspect-ratio: 16/9;
+  background: linear-gradient(135deg, var(--amber-100), #fff);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--amber-600);
+}
+.blog-thumb svg { width: 30%; height: 30%; }
+.blog-body { padding: 22px 22px 24px; }
+.blog-date { font-size: 12.5px; font-weight: 700; color: var(--green-600); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; display: block; }
+.blog-body h3 { font-size: 19px; }
+.blog-body a.read-more { font-weight: 700; color: var(--navy-900); display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; }
+
+/* ---------- Timeline / About ---------- */
+.about-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.value-list li { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 20px; }
+.value-list .icon-badge { flex-shrink: 0; width: 44px; height: 44px; margin-bottom: 0; }
+.value-list h4 { font-size: 16.5px; margin-bottom: 4px; }
+.value-list p { font-size: 14px; margin-bottom: 0; }
+
+/* ---------- CTA banner ---------- */
+.cta-banner {
+  border-radius: var(--radius-lg);
+  background: linear-gradient(120deg, var(--navy-900), var(--navy-700));
+  color: #fff;
+  padding: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+.cta-banner::after {
+  content: "";
+  position: absolute;
+  right: -60px; top: -60px;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(245,166,35,0.35), transparent 70%);
+}
+.cta-banner h2 { color: #fff; margin-bottom: 8px; }
+.cta-banner p { color: rgba(255,255,255,0.75); margin-bottom: 0; }
+.cta-text { max-width: 520px; position: relative; z-index: 1; }
+.cta-actions { position: relative; z-index: 1; display: flex; gap: 14px; flex-wrap: wrap; }
+
+/* ---------- Contact ---------- */
+.contact-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: start; }
+.contact-info-card {
+  background: var(--navy-900);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 40px;
+}
+.contact-info-card h3 { color: #fff; }
+.contact-info-row { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 26px; }
+.contact-info-row:last-child { margin-bottom: 0; }
+.contact-info-row .icon-badge { background: rgba(245,166,35,0.16); color: var(--amber-500); flex-shrink: 0; margin-bottom: 0; }
+.contact-info-row h4 { color: #fff; font-size: 15px; margin-bottom: 4px; }
+.contact-info-row p { color: rgba(255,255,255,0.7); margin-bottom: 0; font-size: 14.5px; }
+
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+}
+.form-row { margin-bottom: 20px; }
+.form-row label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 8px; color: var(--navy-900); }
+.form-row input, .form-row textarea, .form-row select {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  font-family: inherit;
+  font-size: 14.5px;
+  background: #fbfcfe;
+  transition: border-color 0.15s ease;
+}
+.form-row input:focus, .form-row textarea:focus, .form-row select:focus {
+  outline: none;
+  border-color: var(--amber-500);
+}
+.form-row textarea { resize: vertical; min-height: 120px; }
+.form-note { font-size: 13px; color: var(--text-muted); margin-top: 14px; text-align: center; }
+
+/* ---------- Footer ---------- */
+.site-footer { background: var(--navy-900); color: rgba(255,255,255,0.7); padding: 72px 0 28px; }
+.footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+.footer-logo { display: flex; align-items: center; gap: 10px; font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 20px; color: #fff; margin-bottom: 16px; }
+.footer-col h4 { color: #fff; font-size: 15px; margin-bottom: 18px; }
+.footer-col ul li { margin-bottom: 12px; }
+.footer-col a { font-size: 14px; color: rgba(255,255,255,0.65); transition: color 0.15s ease; }
+.footer-col a:hover { color: var(--amber-500); }
+.footer-social { display: flex; gap: 10px; margin-top: 18px; }
+.footer-social a {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+}
+.footer-social a:hover { background: var(--amber-500); color: var(--navy-900); }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ---------- Floating WhatsApp ---------- */
+.wa-float {
+  position: fixed;
+  bottom: 26px;
+  right: 26px;
+  z-index: 600;
+  width: var(--fab-size);
+  height: var(--fab-size);
+  border-radius: 50%;
+  background: var(--wa-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 28px rgba(37, 211, 102, 0.45);
+  animation: wa-pulse 2.6s ease-in-out infinite;
+}
+.wa-float svg { width: 30px; height: 30px; color: #fff; }
+@keyframes wa-pulse {
+  0%, 100% { box-shadow: 0 10px 28px rgba(37, 211, 102, 0.45); }
+  50% { box-shadow: 0 10px 28px rgba(37, 211, 102, 0.7); }
+}
+
+/* ---------- Page header (inner pages) ---------- */
+.page-hero {
+  background: linear-gradient(160deg, var(--navy-900), var(--navy-700));
+  color: #fff;
+  padding: 26px 0 30px;
+  text-align: center;
+}
+.page-hero h1 { color: #fff; font-size: clamp(24px, 3.2vw, 32px); margin-bottom: 8px; }
+.page-hero p { color: rgba(255,255,255,0.72); max-width: 680px; margin: 0 auto; font-size: 14.5px; }
+.breadcrumb { display: flex; justify-content: center; gap: 8px; font-size: 12.5px; color: rgba(255,255,255,0.55); margin-bottom: 10px; }
+.breadcrumb a { color: rgba(255,255,255,0.75); font-weight: 600; }
+
+/* ---------- Utility ---------- */
+.text-center { text-align: center; }
+.mt-0 { margin-top: 0; }
+.mb-0 { margin-bottom: 0; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 980px) {
+  .hero-grid, .about-hero, .contact-grid { grid-template-columns: 1fr; }
+  .hero-art { order: -1; max-width: 360px; margin: 0 auto; }
+  .grid-5, .grid-4 { grid-template-columns: repeat(3, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 760px) {
+  .main-nav, .header-actions .btn-whatsapp span.label { display: none; }
+  .nav-toggle { display: flex; }
+  .main-nav {
+    position: fixed;
+    top: var(--header-h);
+    left: 0; right: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+    display: none;
+    box-shadow: var(--shadow-md);
+  }
+  .main-nav.active { display: flex; }
+  .main-nav a { padding: 14px 16px; border-radius: var(--radius-sm); }
+  .grid-3, .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .cta-banner { flex-direction: column; text-align: center; padding: 40px 28px; }
+  .cta-actions { justify-content: center; }
+  .section { padding: 64px 0; }
+  .form-card, .contact-info-card { padding: 28px; }
+}
+
+/* ==========================================================================
+   PRODUCT PHOTOGRAPHY
+   Real product photos sit on a light plate inside the coloured category tile.
+   When `image` is null in products-data.js the SVG icon shows instead, so the
+   grid never breaks while photos are still being sourced.
+   ========================================================================== */
+.product-thumb img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 14px;
+  background: #ffffff;
+  transition: transform 0.3s ease;
+}
+.product-card:hover .product-thumb img { transform: scale(1.05); }
+
+/* Photo tiles get a white plate, so the category gradient reads only as a thin
+   frame — keeps the shelf colour-coding without tinting the product itself. */
+.product-thumb.has-photo { background: #ffffff !important; padding: 0; }
+.product-thumb.has-photo::after { display: none; }
+/* The icon stays in the markup as the onerror fallback — hide it while the
+   photo is showing. If the image 404s, JS drops .has-photo and the icon returns. */
+.product-thumb.has-photo > svg { display: none; }
+.product-thumb.has-photo .product-category-pill { background: rgba(10,16,28,0.72); }
+
+/* Broken/missing image: hide the <img> and let the icon fallback show */
+.product-thumb img.img-failed { display: none; }
+
+/* ==========================================================================
+   MODEL / VARIANT CHIPS (product detail page)
+   ========================================================================== */
+.pdp-models { margin: 22px 0 6px; }
+.pdp-models h3 {
+  font-family: var(--font-head, inherit);
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+.pdp-model-chips { display: flex; flex-wrap: wrap; gap: 9px; }
+.pdp-model-chip {
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--navy-900, #0a1a30);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.pdp-model-chip:hover { border-color: var(--amber-500, #f5a623); transform: translateY(-1px); }
+.pdp-model-chip.selected {
+  background: var(--navy-900, #0a1a30);
+  border-color: var(--navy-900, #0a1a30);
+  color: #fff;
+}
+.pdp-model-note {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 12px 0 0;
+  line-height: 1.55;
+}
+
+/* Brands stocked, shown on type-level cards (fans, lighting, cables) */
+.pdp-brands { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+.pdp-brand-tag {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 13px;
+}
+
+/* Model count hint on the grid card */
+.product-model-hint {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  margin: 0 0 12px;
+}
+
+/* ==========================================================================
+   SITE PHOTOGRAPHY & VIDEO
+   Real imagery for the landing page, gallery, services, about and blog.
+   Every rule degrades to the original gradient/icon look if a file is missing.
+   ========================================================================== */
+
+/* --- Hero with full-bleed video ------------------------------------------ */
+.hero.hero-media-on { padding: 0; }
+.hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--navy-900);
+}
+.hero-media video,
+.hero-media img.hero-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* Slight desaturation keeps the amber brand accents dominant over the footage */
+  filter: saturate(0.92) contrast(1.03);
+}
+.hero-media img.hero-fallback { position: absolute; inset: 0; }
+/* Scrim: dark on the left for white text, clearer on the right so the
+   photography still reads. */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(100deg, rgba(7,15,29,0.94) 0%, rgba(7,15,29,0.82) 38%,
+                    rgba(7,15,29,0.46) 70%, rgba(7,15,29,0.32) 100%),
+    radial-gradient(900px 520px at 88% 6%, rgba(245,166,35,0.20), transparent 62%);
+}
+.hero.hero-media-on .container { position: relative; z-index: 2; }
+.hero-inner { padding: 104px 0 112px; max-width: 680px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.20);
+  backdrop-filter: blur(6px);
+  color: #fff; font-size: 13px; font-weight: 700;
+  padding: 8px 15px; border-radius: 999px;
+}
+.hero-badge svg { color: var(--amber-500); flex-shrink: 0; }
+
+/* Viewers who ask for less motion get the still poster instead of the loop */
+@media (prefers-reduced-motion: reduce) {
+  .hero-media video { display: none; }
+  .hero-media img.hero-fallback { display: block !important; }
+}
+
+/* --- Stat strip under the hero ------------------------------------------- */
+.stat-strip { background: var(--surface); border-bottom: 1px solid var(--border); }
+.stat-strip .container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.stat-item { display: flex; align-items: center; gap: 14px; }
+.stat-item svg { color: var(--amber-600); flex-shrink: 0; }
+.stat-num { font-family: var(--font-head, inherit); font-size: 24px; font-weight: 800; color: var(--navy-900); line-height: 1.1; }
+.stat-label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+
+/* --- Photo tiles (gallery + recent installs) ----------------------------- */
+.gallery-item img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: transform 0.5s cubic-bezier(.2,.7,.3,1);
+}
+.gallery-item:hover img { transform: scale(1.07); }
+/* Hide the placeholder icon once a photo is in place */
+.gallery-item.has-photo > svg { display: none; }
+.gallery-item.has-photo::after {
+  content: "";
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to top, rgba(7,15,29,0.82) 0%, rgba(7,15,29,0.20) 46%, rgba(7,15,29,0.04) 100%);
+}
+.gallery-item .gallery-caption { position: relative; z-index: 2; }
+
+/* --- Media card: photo on top of a card (services, blog) ----------------- */
+.media-top {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--navy-800), var(--navy-600));
+}
+.media-top img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.45s cubic-bezier(.2,.7,.3,1);
+}
+.card:hover .media-top img,
+.service-card:hover .media-top img { transform: scale(1.06); }
+.media-top .media-tag {
+  position: absolute; left: 14px; top: 14px; z-index: 2;
+  background: rgba(10,16,28,0.62); backdrop-filter: blur(4px);
+  color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.04em;
+  text-transform: uppercase; padding: 6px 12px; border-radius: 999px;
+}
+
+/* Service cards become image-led; the icon badge straddles the photo edge */
+.service-card.has-media { padding: 0; overflow: hidden; }
+.service-card.has-media .service-body {
+  padding: 0 24px 26px; display: flex; flex-direction: column; flex-grow: 1;
+}
+.service-card.has-media .icon-badge {
+  margin: -30px 0 14px 0; position: relative; z-index: 3;
+  box-shadow: 0 8px 20px rgba(10,26,48,0.22);
+}
+
+/* Blog thumbnails */
+.blog-thumb { position: relative; overflow: hidden; }
+.blog-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s ease; }
+.blog-thumb.has-photo > svg { display: none; }
+.blog-card:hover .blog-thumb img { transform: scale(1.05); }
+
+/* --- Split feature block (about / why-us) -------------------------------- */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.split-media {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  box-shadow: var(--shadow-lg);
+  background: var(--navy-800);
+}
+.split-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Amber corner accent so photos feel designed rather than dropped in */
+.split-media::after {
+  content: "";
+  position: absolute; left: 0; bottom: 0;
+  width: 84px; height: 6px; background: var(--amber-500);
+}
+
+/* Overlapping duo used on the About page */
+.media-duo { position: relative; padding-bottom: 54px; padding-right: 42px; }
+.media-duo .split-media:last-child {
+  position: absolute; right: 0; bottom: 0;
+  width: 52%; aspect-ratio: 1/1;
+  border: 6px solid var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* --- Full-width photo band ----------------------------------------------- */
+.photo-band {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--navy-900);
+}
+.photo-band > img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 0;
+}
+.photo-band::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(95deg, rgba(7,15,29,0.93) 0%, rgba(7,15,29,0.74) 52%, rgba(7,15,29,0.48) 100%);
+}
+.photo-band .container { position: relative; z-index: 2; padding-top: 66px; padding-bottom: 66px; }
+.photo-band h2, .photo-band h3 { color: #fff; }
+.photo-band p { color: rgba(255,255,255,0.78); }
+
+/* --- Page hero with a photo behind it ------------------------------------ */
+.page-hero.has-photo { position: relative; overflow: hidden; }
+.page-hero.has-photo > img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 0;
+}
+.page-hero.has-photo::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(100deg, rgba(7,15,29,0.93) 0%, rgba(7,15,29,0.80) 55%, rgba(7,15,29,0.58) 100%);
+}
+.page-hero.has-photo .container { position: relative; z-index: 2; }
+
+/* --- Responsive ----------------------------------------------------------- */
+@media (max-width: 960px) {
+  .split { grid-template-columns: 1fr; gap: 30px; }
+  .media-duo { padding-bottom: 0; padding-right: 0; }
+  .media-duo .split-media:last-child {
+    position: static; width: 100%; aspect-ratio: 16/10; border: 0; margin-top: 16px;
+  }
+  .stat-strip .container { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+}
+@media (max-width: 700px) {
+  .hero-inner { padding: 74px 0 78px; }
+  .hero-scrim {
+    background:
+      linear-gradient(180deg, rgba(7,15,29,0.86) 0%, rgba(7,15,29,0.91) 100%),
+      radial-gradient(600px 400px at 80% 0%, rgba(245,166,35,0.18), transparent 60%);
+  }
+  .photo-band::after { background: linear-gradient(180deg, rgba(7,15,29,0.91), rgba(7,15,29,0.86)); }
+}
+@media (max-width: 520px) {
+  .stat-strip .container { grid-template-columns: 1fr; }
+}
+
+/* ---------- Category heading badge showing a real product photo ----------
+   Replaces the flat line icon on the home page category blocks. A cropped
+   photo of something we actually stock reads as a real shop, not clip-art. */
+.icon-badge.photo {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  padding: 0;
+  flex-shrink: 0;
+}
+.icon-badge.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 5px;
+  background: #fff;
+  display: block;
+}
+/* If the photo is missing, the icon underneath shows through instead. */
+.icon-badge.photo img.img-failed { display: none; }
+.icon-badge.photo:has(img:not(.img-failed)) > svg { display: none; }
+
+/* ==========================================================================
+   PAGE-HERO SLIDESHOW
+   Same treatment as the single-photo page heroes, but the image crossfades
+   through several shots. Only the hero band is affected — the rest of the
+   page keeps its plain background.
+   ========================================================================== */
+/* The shared .has-photo scrim is tuned for a single, bright photo. These
+   frames include dusk and aerial shots, so ease it off or they read as black. */
+.page-hero.has-slides::after {
+  background: linear-gradient(100deg,
+    rgba(7,15,29,0.86) 0%,
+    rgba(7,15,29,0.68) 52%,
+    rgba(7,15,29,0.46) 100%);
+}
+.page-hero.has-slides > img {
+  opacity: 0;
+  animation: heroSlides 48s linear infinite;
+  will-change: opacity;
+}
+/* 6 frames over 48s = 8s each, fades overlapping so there is never a blank beat.
+   Every delay is shifted back by the 1.9s fade-in, so frame 1 is already at
+   full opacity on load — otherwise the band flashes empty navy for ~2s. */
+.page-hero.has-slides > img:nth-of-type(1) { animation-delay: -2s; }
+.page-hero.has-slides > img:nth-of-type(2) { animation-delay:  6s; }
+.page-hero.has-slides > img:nth-of-type(3) { animation-delay: 14s; }
+.page-hero.has-slides > img:nth-of-type(4) { animation-delay: 22s; }
+.page-hero.has-slides > img:nth-of-type(5) { animation-delay: 30s; }
+.page-hero.has-slides > img:nth-of-type(6) { animation-delay: 38s; }
+
+@keyframes heroSlides {
+  0%     { opacity: 0; }
+  4%     { opacity: 1; }
+  16.67% { opacity: 1; }
+  20.67% { opacity: 0; }
+  100%   { opacity: 0; }
+}
+
+/* Reduced-motion viewers get the first frame as a still photo. */
+@media (prefers-reduced-motion: reduce) {
+  .page-hero.has-slides > img { animation: none; opacity: 0; }
+  .page-hero.has-slides > img:nth-of-type(1) { opacity: 1; }
+}
+
+/* ==========================================================================
+   MOBILE FIXES
+   Appended last so these win over the earlier breakpoints.
+
+   The header used to overflow to ~515px on a 360-390px screen: both .logo and
+   .header-actions were flex-shrink:0, so nothing could compress and the
+   hamburger ended up off-screen entirely — the menu was unreachable on a
+   phone. These rules let the header shrink and drop what a phone doesn't need.
+   ========================================================================== */
+
+@media (max-width: 760px) {
+
+  /* --- Utility bar: one compact line instead of three stacked rows (110px) - */
+  .utility-bar .container {
+    justify-content: center;
+    gap: 0;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+  /* Keep only the actionable WhatsApp line; hours live in the footer. */
+  .utility-bar .utility-item { display: none; }
+  .utility-bar .utility-item:last-child { display: flex; font-size: 12px; }
+
+  /* --- Header must fit the screen -------------------------------------- */
+  .site-header .container { gap: 10px; }
+  .logo {
+    min-width: 0;
+    flex-shrink: 1;
+    font-size: 18px;
+    gap: 8px;
+  }
+  .logo .logo-mark { width: 38px; height: 38px; flex-shrink: 0; }
+  /* The strapline is the first thing to go — the brand name carries it. */
+  .logo small { display: none; }
+
+  .header-actions { gap: 6px; flex-shrink: 0; }
+  /* The floating WhatsApp button already covers this action on mobile. */
+  .header-actions .btn-whatsapp { display: none; }
+  .icon-btn { width: 38px; height: 38px; }
+  .nav-toggle { flex-shrink: 0; }
+
+  /* --- Don't let the tightened catalog section get its padding back ----- */
+  .section-top-tight { padding-top: 22px; }
+
+  /* --- Page heroes stay compact ---------------------------------------- */
+  .page-hero { padding: 22px 0 26px; }
+  .page-hero p { font-size: 13.5px; }
+
+  /* --- Filter chips: smaller so they take fewer rows ------------------- */
+  .filter-bar { gap: 5px; margin-bottom: 14px; }
+  .filter-btn { padding: 6px 11px; font-size: 12.5px; }
+}
+
+@media (max-width: 560px) {
+  /* Two cards per row is still the right density, but side-by-side buttons
+     are far too narrow at this width — stack them. */
+  .product-actions { flex-direction: column; gap: 7px; }
+  .product-actions .btn { width: 100%; flex: 0 0 auto; }
+  .product-body { padding: 12px 13px 14px; }
+  .product-body h3 { font-size: 14.5px; }
+  .product-body p { font-size: 12.5px; }
+  .product-model-hint { font-size: 11.5px; }
+
+  /* Products (.grid-4) stay two-up — compact cards, and 69 of them. But the
+     service/feature cards (.grid-3) carry a photo, a heading and a paragraph
+     each, which truncates badly at ~160px. Those go full width. */
+  .grid-3 { grid-template-columns: 1fr; }
+
+  .grid { gap: 14px; }
+  .container { padding-left: 16px; padding-right: 16px; }
+
+  /* Floating buttons shouldn't eat the screen */
+  :root { --fab-size: 50px; }
+  .side-toolbar, .wa-float { right: 14px; }
+  .wa-float { bottom: 14px; }
+  .side-toolbar { bottom: calc(14px + var(--fab-size)); }
+}
+
+@media (max-width: 340px) {
+  /* Only the very narrowest phones drop to one column. 360px and 390px keep
+     two, which is the norm for a catalog this size — 69 products in a single
+     column is a punishing scroll. */
+  .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+  .logo { font-size: 16px; }
+}

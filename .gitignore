@@ -1,0 +1,19 @@
+# OS / editor cruft
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Working copies
+*.bak
+*.bak[0-9]
+*.bak[0-9][0-9]
+*.orig
+*.tmp
+_mobiletest.html
+
+# Dependencies (none today, but keeps a stray install out of the repo)
+node_modules/
