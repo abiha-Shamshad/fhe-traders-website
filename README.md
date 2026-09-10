@@ -90,7 +90,7 @@ back to a colour-coded category icon.
 
 ## Contact details
 
-`js/config.js` holds the WhatsApp number (`923397200213` — country code, no
+`js/config.js` holds the WhatsApp number (`923202200213` — country code, no
 `+` or dashes). Every enquiry button on the site is built from it at runtime
 by `wireWhatsAppButtons()`, so it is the only place that number is written.
 
@@ -103,7 +103,7 @@ work without JS and search engines can see them. They appear in the footer of
 every page and in the contact card on `contact.html`:
 
 - Email `fhepower04@gmail.com`
-- Phone / WhatsApp `0339-7200213`
+- Phone / WhatsApp `0320-2200213`
 - Instagram [@futurehomeelect24](https://www.instagram.com/futurehomeelect24/)
 - TikTok [@fhesolar24](https://www.tiktok.com/@fhesolar24)
 

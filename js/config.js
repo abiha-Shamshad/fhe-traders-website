@@ -7,8 +7,8 @@
 // of the same WhatsApp line.
 // ==========================================================================
 window.SITE_CONFIG = {
-  WHATSAPP_NUMBER: "923397200213",
-  PHONE_DISPLAY: "0339-7200213",
+  WHATSAPP_NUMBER: "923202200213",
+  PHONE_DISPLAY: "0320-2200213",
   EMAIL: "fhepower04@gmail.com",
   BUSINESS_NAME: "FHE Traders",
   HOURS: "Mon – Sat, 9:00 AM – 8:00 PM",
