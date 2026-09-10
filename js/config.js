@@ -1,11 +1,15 @@
 // ==========================================================================
 // FHE Traders — Site configuration
-// Update WHATSAPP_NUMBER below once the real business WhatsApp number is
-// confirmed. Format: country code + number, no "+", no spaces or dashes.
-// Example for Pakistan: "923001234567"
+// WHATSAPP_NUMBER is the one value every enquiry button on the site reads.
+// Format: country code + number, no "+", no spaces or dashes.
+// Email and social links are plain hrefs in the page markup (crawlable, and
+// they work without JS); PHONE_DISPLAY below is only the human-readable form
+// of the same WhatsApp line.
 // ==========================================================================
-const SITE_CONFIG = {
-  WHATSAPP_NUMBER: "923001234567", // <-- PLACEHOLDER: replace with real number
+window.SITE_CONFIG = {
+  WHATSAPP_NUMBER: "923397200213",
+  PHONE_DISPLAY: "0339-7200213",
+  EMAIL: "fhepower04@gmail.com",
   BUSINESS_NAME: "FHE Traders",
   HOURS: "Mon – Sat, 9:00 AM – 8:00 PM",
 };

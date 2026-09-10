@@ -2,6 +2,10 @@
 // FHE Traders — Site behaviour
 // ==========================================================================
 
+// Width at which the nav becomes the drawer. Must match the media query in
+// css/style.css that moves .main-nav to its collapsed layout.
+const NAV_DRAWER_WIDTH = 1140;
+
 document.addEventListener("DOMContentLoaded", () => {
   wireWhatsAppButtons();
   wireNavToggle();
@@ -14,9 +18,14 @@ document.addEventListener("DOMContentLoaded", () => {
   wireYear();
 });
 
+/** The business WhatsApp line. js/config.js is loaded on every page. */
+function whatsAppNumber() {
+  return (window.SITE_CONFIG && window.SITE_CONFIG.WHATSAPP_NUMBER) || "";
+}
+
 /** Build every WhatsApp link from SITE_CONFIG + each element's data-msg. */
 function wireWhatsAppButtons() {
-  const number = (window.SITE_CONFIG && SITE_CONFIG.WHATSAPP_NUMBER) || "923001234567";
+  const number = whatsAppNumber();
   document.querySelectorAll("[data-whatsapp]").forEach((el) => {
     const msg = el.getAttribute("data-msg") || "Hi FHE Traders, I'd like to know more.";
     el.setAttribute("href", `https://wa.me/${number}?text=${encodeURIComponent(msg)}`);
@@ -35,7 +44,10 @@ function wireNavToggle() {
     nav.classList.toggle("active");
   });
   nav.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (e) => {
+      // The categories chevron expands a submenu in place — closing the whole
+      // menu on that tap would shut it before anything could be read.
+      if (e.target.closest(".chev-btn")) return;
       toggle.classList.remove("active");
       nav.classList.remove("active");
     });
@@ -51,14 +63,23 @@ function markActiveNav() {
   });
 }
 
-/** Categories mega-menu: hover works via CSS; add click/tap toggle for touch devices. */
+/** Categories mega-menu: hover works via CSS; on touch the chevron expands it. */
 function wireNavDropdown() {
   const dropdown = document.getElementById("categories-dropdown");
   if (!dropdown) return;
   const trigger = dropdown.querySelector("a");
+  const isDrawerLayout = () =>
+    window.matchMedia("(hover: none)").matches ||
+    window.innerWidth <= NAV_DRAWER_WIDTH;
+
   trigger.addEventListener("click", (e) => {
-    if (window.matchMedia("(hover: none)").matches || window.innerWidth <= 760) {
+    if (!isDrawerLayout()) return;
+    // Only the chevron toggles. Tapping the "Products" label itself follows the
+    // link to the products page — swallowing that tap left phone users with a
+    // menu item that never went anywhere.
+    if (e.target.closest(".chev-btn")) {
       e.preventDefault();
+      e.stopPropagation();
       dropdown.classList.toggle("open");
     }
   });
@@ -192,7 +213,7 @@ function wireContactForm() {
   if (!form) return;
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const number = (window.SITE_CONFIG && SITE_CONFIG.WHATSAPP_NUMBER) || "923001234567";
+    const number = whatsAppNumber();
     const name = form.querySelector("#name")?.value.trim() || "";
     const phone = form.querySelector("#phone")?.value.trim() || "";
     const service = form.querySelector("#service")?.value || "";
