@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20260918-itel">
+<link rel="stylesheet" href="css/style.css?v=20260918-split">
 </head>
 <body>
 
@@ -355,10 +355,20 @@
       // `^` as well as `\s+`, so the last remaining generic word strips too —
       // "Itel Energy Solar Inverter" has to reduce all the way to nothing, not
       // stop at "Solar".
-      const GENERIC_TAIL = /(?:^|\s+)(?:solar|hybrid|lithium|led|electrical|galvanized|power|energy|inverter|inverters|panel|panels|battery|batteries|stand|stands|fan|fans|light|lights|lighting|cable|cables|fitting|fittings|board|boards|kit|kits|drive|drives|system|systems)$/i;
+      const GENERIC_TAIL = /(?:^|\s+)(?:solar|hybrid|off-grid|offgrid|on-grid|ongrid|lithium|led|electrical|galvanized|power|energy|inverter|inverters|panel|panels|battery|batteries|stand|stands|fan|fans|light|lights|lighting|cable|cables|fitting|fittings|board|boards|kit|kits|drive|drives|system|systems)$/i;
+      const esc_re = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       function shortName(p, brand) {
-        const safe = brand.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        let n = p.name.replace(new RegExp("^" + safe + "\\s*", "i"), "").trim();
+        // Products are often named after the short form of a brand — "Crown
+        // Xavier III 4kW" under the brand "Crown Micro" — so try the first word
+        // as well as the full brand, longest first.
+        const tries = [brand];
+        const first = brand.split(/\s+/)[0];
+        if (first !== brand) tries.push(first);
+        let n = p.name.trim();
+        for (const t of tries) {
+          const stripped = n.replace(new RegExp("^" + esc_re(t) + "\\s*", "i"), "").trim();
+          if (stripped !== n) { n = stripped; break; }
+        }
         let prev;
         do { prev = n; n = n.replace(GENERIC_TAIL, "").trim(); } while (n !== prev);
         return n || "Standard range";
@@ -614,10 +624,10 @@
 
 <a href="#" class="wa-float" data-whatsapp data-msg="Hi FHE Traders, I'd like to enquire." aria-label="Chat on WhatsApp"><svg><use href="#icon-whatsapp"/></svg></a>
 
-<script src="js/products-data.js?v=20260918-itel"></script>
-<script src="js/wishlist.js?v=20260918-itel"></script>
-<script src="js/search.js?v=20260918-itel"></script>
-<script src="js/config.js?v=20260918-itel"></script>
-<script src="js/main.js?v=20260918-itel"></script>
+<script src="js/products-data.js?v=20260918-split"></script>
+<script src="js/wishlist.js?v=20260918-split"></script>
+<script src="js/search.js?v=20260918-split"></script>
+<script src="js/config.js?v=20260918-split"></script>
+<script src="js/main.js?v=20260918-split"></script>
 </body>
 </html>

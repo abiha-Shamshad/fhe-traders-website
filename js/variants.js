@@ -270,6 +270,15 @@ function getVariantInfo(product, model) {
   const ownDesc = own && own.desc;
   const ownImage = own && own.image;
   const ownSpecs = own && own.specs;
+
+  // A product with a single model has nothing to disambiguate: the chip is
+  // there to carry the exact variant into the WhatsApp enquiry, not to swap the
+  // page. Generating a sizing note here would overwrite the product's own
+  // description with something more generic, so leave it alone.
+  if (!ownDesc && !ownImage && !ownSpecs &&
+      product.models && product.models.length === 1) {
+    return { desc: null, image: null, specs: null };
+  }
   if (ownDesc && ownImage && ownSpecs) {
     return { desc: ownDesc, image: ownImage, specs: ownSpecs };
   }
