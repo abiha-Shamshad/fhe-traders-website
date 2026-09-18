@@ -9,11 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20260910k">
+<link rel="stylesheet" href="css/style.css?v=20260918-itel">
 <style>
   .pdp-crumb-bar { border-bottom: 1px solid var(--border); background: var(--surface); }
   .pdp-crumb { display: flex; gap: 8px; font-size: 13.5px; color: var(--text-muted); flex-wrap: wrap; }
-  .pdp-crumb a { color: var(--navy-900); font-weight: 600; }
+  .pdp-crumb a { color: var(--ink-900); font-weight: 600; }
   .pdp-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 44px; align-items: start; }
   .pdp-visual .product-thumb { aspect-ratio: 1 / 1; border-radius: var(--radius-lg); }
   .pdp-visual .product-thumb svg { width: 38%; height: 38%; }
@@ -28,10 +28,10 @@
   .pdp-secondary-btn {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 12px 20px; border-radius: 999px; font-weight: 600; font-size: 14px;
-    border: 1.5px solid var(--border); background: var(--surface); color: var(--navy-900);
+    border: 1.5px solid var(--border); background: var(--surface); color: var(--ink-900);
     transition: border-color 0.15s ease, color 0.15s ease;
   }
-  .pdp-secondary-btn:hover { border-color: var(--amber-500); color: var(--amber-600); }
+  .pdp-secondary-btn:hover { border-color: var(--amber-500); color: var(--amber-700); }
   .pdp-secondary-btn.active { background: var(--red-600); border-color: var(--red-600); color: #fff; }
   .pdp-section-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
   .pdp-not-found { text-align: center; padding: 60px 20px; }
@@ -321,8 +321,8 @@
 
 <a href="#" class="wa-float" data-whatsapp data-msg="Hi FHE Traders, I'd like to enquire." aria-label="Chat on WhatsApp"><svg><use href="#icon-whatsapp"/></svg></a>
 
-<script src="js/products-data.js?v=20260910k"></script>
-<script src="js/variants.js?v=20260910k"></script>
+<script src="js/products-data.js?v=20260918-itel"></script>
+<script src="js/variants.js?v=20260918-itel"></script>
 <script>
   (function renderProductPage() {
     var CATEGORY_LABELS = {
@@ -341,6 +341,10 @@
     };
 
     // Shared thumbnail builder for the related / recently-viewed card grids.
+    // The recently-viewed grid lives in a second <script> block with its own
+    // scope, so this has to be reachable from outside this listener — without
+    // the export below that grid throws ReferenceError and never renders.
+    window.cardThumb = cardThumb;
     function cardThumb(p, badgeHtml, catLabel) {
       function esc(str) {
         return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;")
@@ -357,6 +361,14 @@
         '<span class="product-category-pill">' + esc(catLabel) + '</span>' +
         inner +
         '</div>';
+    }
+
+    // js/variants.js owns the two `models` shapes (plain label, or an object
+    // carrying that variant's own photo and specs). Guarded so a failure to
+    // load variants.js degrades to labels rather than blanking the page.
+    function modelLabelOf(m) {
+      if (typeof window.modelLabel === "function") return window.modelLabel(m);
+      return (m && typeof m === "object") ? String(m.label || "") : String(m == null ? "" : m);
     }
 
     var params = new URLSearchParams(window.location.search);
@@ -419,13 +431,16 @@
     }
 
     var specsList = document.getElementById("pdp-specs");
-    specsList.innerHTML = "";
-    (product.specs || []).forEach(function (spec) {
-      var li = document.createElement("li");
-      li.innerHTML = '<svg width="16" height="16"><use href="#icon-check"/></svg><span></span>';
-      li.querySelector("span").textContent = spec;
-      specsList.appendChild(li);
-    });
+    function renderSpecs(list) {
+      specsList.innerHTML = "";
+      (list || []).forEach(function (spec) {
+        var li = document.createElement("li");
+        li.innerHTML = '<svg width="16" height="16"><use href="#icon-check"/></svg><span></span>';
+        li.querySelector("span").textContent = spec;
+        specsList.appendChild(li);
+      });
+    }
+    renderSpecs(product.specs);
 
     // Brands stocked — shown on type-level cards (fans, lighting, cables)
     var brandsEl = document.getElementById("pdp-brands");
@@ -457,11 +472,17 @@
     // have them, and restores the product-level ones when it is deselected.
     var baseDesc = product.description || "";
     var baseImage = product.image || null;
+    var baseSpecs = product.specs || [];
 
     function applyVariant(model) {
       var info = (typeof window.getVariantInfo === "function")
         ? window.getVariantInfo(product, model)
-        : { desc: null, image: null };
+        : { desc: null, image: null, specs: null };
+
+      // --- specs ---
+      // A model carrying its own spec list replaces the product-level one; a
+      // plain label leaves the shared specs in place.
+      renderSpecs((model && info.specs) ? info.specs : baseSpecs);
 
       // --- description ---
       var descEl = document.getElementById("pdp-description");
@@ -494,11 +515,16 @@
     if (product.models && product.models.length) {
       document.getElementById("pdp-models-label").textContent = product.modelsLabel || "Available Models";
       var chipsEl = document.getElementById("pdp-model-chips");
+      // ?model=<label> arrives from the capacity chips on the products grid, so
+      // tapping "6kW" there lands here with that variant already showing.
+      var wantedModel = params.get("model");
+      var preselect = null;
       product.models.forEach(function (m) {
+        var text = modelLabelOf(m);
         var chip = document.createElement("button");
         chip.type = "button";
         chip.className = "pdp-model-chip";
-        chip.textContent = m;
+        chip.textContent = text;
         chip.addEventListener("click", function () {
           var alreadyOn = chip.classList.contains("selected");
           chipsEl.querySelectorAll(".pdp-model-chip").forEach(function (c) { c.classList.remove("selected"); });
@@ -506,14 +532,21 @@
             selectedModel = null;           // tapping the selected chip clears it
           } else {
             chip.classList.add("selected");
-            selectedModel = m;
+            selectedModel = text;
           }
           updateWhatsAppMessage();
           applyVariant(selectedModel);
         });
         chipsEl.appendChild(chip);
+        if (wantedModel && text === wantedModel) preselect = chip;
       });
       modelsWrap.hidden = false;
+      if (preselect) {
+        preselect.classList.add("selected");
+        selectedModel = modelLabelOf(preselect.textContent);
+        updateWhatsAppMessage();
+        applyVariant(selectedModel);
+      }
     }
 
     var related = (typeof PRODUCTS !== "undefined" ? PRODUCTS : [])
@@ -550,10 +583,10 @@
     window.__pdpProduct = product;
   })();
 </script>
-<script src="js/wishlist.js?v=20260910k"></script>
-<script src="js/search.js?v=20260910k"></script>
-<script src="js/config.js?v=20260910k"></script>
-<script src="js/main.js?v=20260910k"></script>
+<script src="js/wishlist.js?v=20260918-itel"></script>
+<script src="js/search.js?v=20260918-itel"></script>
+<script src="js/config.js?v=20260918-itel"></script>
+<script src="js/main.js?v=20260918-itel"></script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const product = window.__pdpProduct;

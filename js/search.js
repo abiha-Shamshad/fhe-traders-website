@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
       (catLabel[p.category] || "").toLowerCase().includes(q) ||
       (p.shortDesc && p.shortDesc.toLowerCase().includes(q)) ||
       (p.brands || []).some((b) => b.toLowerCase().includes(q)) ||
-      (p.models || []).some((m) => m.toLowerCase().replace(/\s+/g, "").includes(q.replace(/\s+/g, "")))
+      (p.models || []).some((m) => modelLabel(m).toLowerCase().replace(/\s+/g, "").includes(q.replace(/\s+/g, "")))
     ).slice(0, 8);
 
     if (matches.length === 0) {

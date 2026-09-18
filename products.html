@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Products — FHE Traders</title>
-<meta name="description" content="Browse solar panels (Canadian, Longi, Jinko, JA, TCL, Crown), galvanized stands, inverters (Inverex, Solax, GoodWe, Solis and more), lithium batteries, VFD drives, fans, lighting, fittings and cable from FHE Traders. Enquire on WhatsApp.">
+<meta name="description" content="Browse solar panels (Canadian, Longi, Jinko, JA, TCL, Crown), galvanized stands, Inverex, Crown Micro and Itel inverters (Veyron II, Nitrox, Xavier, Elego, Nova, Sparta), lithium batteries, VFD drives, fans, lighting, fittings and cable from FHE Traders. Enquire on WhatsApp.">
 <link rel="icon" type="image/png" href="images/site/favicon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20260910k">
+<link rel="stylesheet" href="css/style.css?v=20260918-itel">
 </head>
 <body>
 
@@ -157,11 +157,19 @@
         <button class="filter-btn" data-filter="appliances">Appliances</button>
       </div>
 
+      <!-- Where you are in category > brand > products. Hidden at the top level. -->
+      <div class="catalog-trail" id="catalog-trail" hidden>
+        <button type="button" class="catalog-back" id="catalog-back">
+          <svg width="15" height="15" style="transform:rotate(180deg)"><use href="#icon-arrow-right"/></svg> Back
+        </button>
+        <nav class="catalog-crumb" id="catalog-crumb" aria-label="Catalog position"></nav>
+      </div>
+
       <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
         <span id="result-count" style="font-size:13.5px; font-weight:600; color:var(--text-muted);"></span>
-        <div style="display:flex; align-items:center; gap:10px;">
+        <div style="display:flex; align-items:center; gap:10px;" id="sort-wrap">
         <label for="sort-select" style="font-size:13.5px; font-weight:600; color:var(--text-muted);">Sort by</label>
-        <select id="sort-select" style="padding:9px 14px; border-radius:999px; border:1.5px solid var(--border); font-family:inherit; font-size:13.5px; font-weight:600; color:var(--navy-900); background:var(--surface);">
+        <select id="sort-select" style="padding:9px 14px; border-radius:999px; border:1.5px solid var(--border); font-family:inherit; font-size:13.5px; font-weight:600; color:var(--ink-900); background:var(--surface);">
           <option value="featured">Featured</option>
           <option value="name-asc">Name (A–Z)</option>
           <option value="name-desc">Name (Z–A)</option>
@@ -186,16 +194,100 @@
       };
       const grid = document.getElementById("product-grid");
       const sortSelect = document.getElementById("sort-select");
+      const sortWrap = document.getElementById("sort-wrap");
       const countEl = document.getElementById("result-count");
+      const trailEl = document.getElementById("catalog-trail");
+      const crumbEl = document.getElementById("catalog-crumb");
+      const backBtn = document.getElementById("catalog-back");
+
+      // How many capacity chips fit on a card before it starts to look like a
+      // spreadsheet. The rest collapse into a "+N more" chip.
+      const MAX_CHIPS = 8;
+
+      // category: "all" or a CATEGORY_LABELS key. brand: null or a brand name.
+      const state = { category: "all", brand: null };
 
       function esc(str) {
         return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;")
           .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
       }
 
-      // Real product photo when we have one, category-coloured SVG icon when we don't.
-      // onerror strips the <img> so a missing file degrades to the icon rather than
-      // leaving a broken-image box sitting in the grid.
+      // js/variants.js owns the two model shapes; fall back defensively in case
+      // it ever fails to load, so the grid renders rather than throwing.
+      const label = (m) => (typeof window.modelLabel === "function")
+        ? window.modelLabel(m)
+        : (m && typeof m === "object" ? String(m.label || "") : String(m == null ? "" : m));
+
+      // ---- Brand grouping --------------------------------------------------
+      // The first entry in `brands` is the one the card is filed under. Products
+      // with no brands field (stands, breakers, CCTV kits) share one bucket so
+      // they are never dropped from a category.
+      const UNBRANDED = "Other";
+      const brandOf = (p) => (p.brands && p.brands[0]) ? p.brands[0] : UNBRANDED;
+      const slug = (b) => b.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+      function brandGroups(category) {
+        const map = new Map();
+        PRODUCTS.filter((p) => p.category === category).forEach((p) => {
+          const b = brandOf(p);
+          if (!map.has(b)) map.set(b, []);
+          map.get(b).push(p);
+        });
+        return map;
+      }
+
+      // The brand step earns its place when there is a brand to name. Several
+      // brands is the obvious case; a single named brand still gets a card,
+      // because that name is what the customer came looking for. A lone
+      // unbranded bucket (stands, breakers, CCTV) is skipped — "Other" is not
+      // a choice worth a screen.
+      function hasBrandStep(category) {
+        if (category === "all") return false;
+        const groups = brandGroups(category);
+        if (groups.size >= 2) return true;
+        return groups.size === 1 && !groups.has(UNBRANDED);
+      }
+
+      function brandBySlug(category, wanted) {
+        for (const b of brandGroups(category).keys()) {
+          if (slug(b) === wanted) return b;
+        }
+        return null;
+      }
+
+      // ---- Capacity range shown on a brand card ---------------------------
+      // Longest unit first, so "5kWh" reads as kWh rather than matching kW and
+      // labelling a battery bank in kilowatts.
+      const UNIT_RE = /([\d.]+)\s*(kWh|kVA|kW|Wh|W|Ah|A)\b/gi;
+      const UNIT_CANON = { kwh: "kWh", kva: "kVA", kw: "kW", wh: "Wh", w: "W", ah: "Ah", a: "A" };
+
+      function capacityRange(products) {
+        // Several units can appear across one brand's models; the unit that
+        // shows up most often is the one the range is quoted in.
+        const byUnit = new Map();
+        products.forEach((p) => (p.models || []).forEach((m) => {
+          const text = label(m);
+          let hit;
+          UNIT_RE.lastIndex = 0;
+          while ((hit = UNIT_RE.exec(text)) !== null) {
+            const unit = UNIT_CANON[hit[2].toLowerCase()] || hit[2];
+            if (!byUnit.has(unit)) byUnit.set(unit, []);
+            byUnit.get(unit).push(parseFloat(hit[1]));
+          }
+        }));
+        if (!byUnit.size) return "";
+        let best = null;
+        byUnit.forEach((vals, unit) => {
+          if (!best || vals.length > best.vals.length) best = { unit: unit, vals: vals };
+        });
+        const lo = Math.min.apply(null, best.vals), hi = Math.max.apply(null, best.vals);
+        return lo === hi ? lo + best.unit : lo + best.unit + " – " + hi + best.unit;
+      }
+
+      // ---- Thumbnails ------------------------------------------------------
+      // Real photo when we have one, category-coloured SVG icon when we don't.
+      // onerror strips the <img> so a missing file degrades to the icon rather
+      // than leaving a broken-image box sitting in the grid.
       function thumbHtml(p, badgeHtml, catLabel) {
         const hasPhoto = !!p.image;
         const inner = hasPhoto
@@ -210,12 +302,30 @@
           '</div>';
       }
 
+      // ---- Capacity chips on a product card --------------------------------
+      // Each chip deep-links to the detail page with that model preselected, so
+      // the customer lands on the right photo and spec list in one tap.
+      function wattChips(p) {
+        const models = p.models || [];
+        if (!models.length) return "";
+        const url = "product.html?id=" + encodeURIComponent(p.id);
+        const shown = models.slice(0, MAX_CHIPS);
+        let html = shown.map((m) => {
+          const t = label(m);
+          return '<a class="card-watt" href="' + url + '&model=' + encodeURIComponent(t) + '">' + esc(t) + '</a>';
+        }).join("");
+        if (models.length > MAX_CHIPS) {
+          html += '<a class="card-watt more" href="' + url + '">+' + (models.length - MAX_CHIPS) + ' more</a>';
+        }
+        return '<div class="card-watts">' + html + '</div>';
+      }
+
       function modelHint(p) {
         if (!p.models || p.models.length < 2) return "";
         return '<p class="product-model-hint">' + p.models.length + ' options available</p>';
       }
 
-      function cardHtml(p) {
+      function cardHtml(p, withChips) {
         const catLabel = CATEGORY_LABELS[p.category] || p.category;
         const badgeHtml = p.badge === "popular" ? '<span class="product-badge badge-popular">Popular</span>'
           : p.badge === "new" ? '<span class="product-badge badge-new">New</span>' : "";
@@ -226,7 +336,7 @@
             '<div class="product-body">' +
               '<h3><a href="' + url + '">' + esc(p.name) + '</a></h3>' +
               '<p>' + esc(p.shortDesc) + '</p>' +
-              modelHint(p) +
+              (withChips ? wattChips(p) : modelHint(p)) +
               '<div class="product-actions">' +
                 '<a href="' + url + '" class="btn btn-outline-dark btn-sm" style="flex:1;">Details</a>' +
                 '<a href="#" class="btn btn-whatsapp btn-sm" style="flex:1;" data-whatsapp ' +
@@ -238,66 +348,183 @@
           '</div>';
       }
 
-      function currentFilter() {
-        const activeBtn = document.querySelector(".filter-bar .filter-btn.active");
-        return activeBtn ? activeBtn.getAttribute("data-filter") : "all";
+      // What is distinctive about a product once the brand and the category
+      // noise are stripped: "Inverex Veyron II 4.2kW Solar Inverter" becomes
+      // "Veyron II 4.2kW". A brand's plain line reduces to nothing, so it gets
+      // a label instead of an empty string.
+      // `^` as well as `\s+`, so the last remaining generic word strips too —
+      // "Itel Energy Solar Inverter" has to reduce all the way to nothing, not
+      // stop at "Solar".
+      const GENERIC_TAIL = /(?:^|\s+)(?:solar|hybrid|lithium|led|electrical|galvanized|power|energy|inverter|inverters|panel|panels|battery|batteries|stand|stands|fan|fans|light|lights|lighting|cable|cables|fitting|fittings|board|boards|kit|kits|drive|drives|system|systems)$/i;
+      function shortName(p, brand) {
+        const safe = brand.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        let n = p.name.replace(new RegExp("^" + safe + "\\s*", "i"), "").trim();
+        let prev;
+        do { prev = n; n = n.replace(GENERIC_TAIL, "").trim(); } while (n !== prev);
+        return n || "Standard range";
       }
 
+      function brandCardHtml(brand, products, category) {
+        // Lead with a product that actually has a photo — an icon tile tells you
+        // nothing about a brand.
+        const withPhoto = products.find((p) => p.image) || products[0];
+        const thumbInner = withPhoto && withPhoto.image
+          ? '<img src="' + esc(withPhoto.image) + '" alt="" loading="lazy" decoding="async" ' +
+            'onerror="this.classList.add(\'img-failed\');">'
+          : '<svg><use href="#' + (withPhoto ? withPhoto.icon : "icon-layers") + '"/></svg>';
+        const names = products.map((p) => shortName(p, brand));
+        const shownNames = names.slice(0, 3).join(", ") + (names.length > 3 ? " +" + (names.length - 3) + " more" : "");
+        const range = capacityRange(products);
+        return '' +
+          '<button type="button" class="brand-card" data-brand="' + esc(brand) + '" data-category="' + category + '">' +
+            '<div class="brand-card-thumb">' +
+              '<span class="brand-card-count">' + products.length + (products.length === 1 ? " product" : " products") + '</span>' +
+              thumbInner +
+            '</div>' +
+            '<div class="brand-card-body">' +
+              '<h3>' + esc(brand) + '</h3>' +
+              (range ? '<p class="brand-card-range">' + esc(range) + '</p>' : "") +
+              '<p class="brand-card-items">' + esc(shownNames) + '</p>' +
+              '<span class="brand-card-go">View range <svg width="14" height="14"><use href="#icon-arrow-right"/></svg></span>' +
+            '</div>' +
+          '</button>';
+      }
+
+      // ---- Sorting ---------------------------------------------------------
+      function sorted(list) {
+        const by = sortSelect.value;
+        const out = list.slice();
+        if (by === "name-asc") out.sort((a, b) => a.name.localeCompare(b.name));
+        else if (by === "name-desc") out.sort((a, b) => b.name.localeCompare(a.name));
+        else if (by === "category") out.sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
+        return out;
+      }
+
+      // ---- Trail -----------------------------------------------------------
+      function renderTrail() {
+        if (state.category === "all") { trailEl.hidden = true; return; }
+        trailEl.hidden = false;
+        const catLabel = CATEGORY_LABELS[state.category] || state.category;
+        let html = '<button type="button" data-go="all">All products</button><span>/</span>';
+        if (state.brand) {
+          html += '<button type="button" data-go="category">' + esc(catLabel) + '</button><span>/</span>' +
+                  '<span class="current">' + esc(state.brand) + '</span>';
+        } else {
+          html += '<span class="current">' + esc(catLabel) + '</span>';
+        }
+        crumbEl.innerHTML = html;
+      }
+
+      // ---- Render ----------------------------------------------------------
       function render() {
-        let list = PRODUCTS.slice();
-        const sortBy = sortSelect.value;
-        if (sortBy === "name-asc") list.sort((a, b) => a.name.localeCompare(b.name));
-        else if (sortBy === "name-desc") list.sort((a, b) => b.name.localeCompare(a.name));
-        else if (sortBy === "category") list.sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
-        grid.innerHTML = list.map(cardHtml).join("");
+        const showingBrands = state.category !== "all" && !state.brand && hasBrandStep(state.category);
+        sortWrap.style.display = showingBrands ? "none" : "";
+        renderTrail();
+
+        if (showingBrands) {
+          const groups = brandGroups(state.category);
+          const keys = Array.from(groups.keys()).sort((a, b) => {
+            // Keep the catch-all bucket last; everything else alphabetical.
+            if (a === UNBRANDED) return 1;
+            if (b === UNBRANDED) return -1;
+            return a.localeCompare(b);
+          });
+          grid.innerHTML = keys.map((b) => brandCardHtml(b, groups.get(b), state.category)).join("");
+          countEl.textContent = keys.length + (keys.length === 1 ? " brand in " : " brands in ") +
+            (CATEGORY_LABELS[state.category] || state.category);
+          return;
+        }
+
+        let list = PRODUCTS.filter((p) => state.category === "all" || p.category === state.category);
+        if (state.brand) list = list.filter((p) => brandOf(p) === state.brand);
+        list = sorted(list);
+
+        // Chips are the point of the brand view; at the top level they would
+        // just add noise to 73 cards, so the option count stays instead.
+        const withChips = !!state.brand || (state.category !== "all" && !hasBrandStep(state.category));
+        grid.innerHTML = list.map((p) => cardHtml(p, withChips)).join("");
         if (typeof wireWhatsAppButtons === "function") wireWhatsAppButtons();
 
-        // Re-apply whatever filter is active — innerHTML wiped the display styles.
-        applyDisplay(currentFilter());
+        countEl.textContent = state.category === "all"
+          ? "Showing all " + list.length + " products"
+          : "Showing " + list.length + (list.length === 1 ? " product in " : " products in ") +
+            (state.brand ? state.brand : (CATEGORY_LABELS[state.category] || state.category));
       }
 
-      function applyDisplay(active) {
-        grid.querySelectorAll("[data-category]").forEach((card) => {
-          const match = active === "all" || card.getAttribute("data-category") === active;
-          card.style.display = match ? "" : "none";
-        });
-        updateCount(active);
-      }
-
-      function updateCount(active) {
-        if (!countEl) return;
-        const shown = Array.from(grid.querySelectorAll("[data-category]"))
-          .filter((c) => c.style.display !== "none").length;
-        countEl.textContent = active === "all"
-          ? "Showing all " + shown + " products"
-          : "Showing " + shown + " in " + (CATEGORY_LABELS[active] || active);
-      }
-
-      // main.js (wireProductFilter) owns the filter buttons, the active class and
-      // the #category deep links. We only re-apply the current filter after a
-      // re-render and keep the result count in step, so the two don't fight.
-      window.onProductFilterChange = updateCount;
-      sortSelect.addEventListener("change", () => {
-        render();
-        if (typeof window.applyProductFilter === "function") {
-          window.applyProductFilter(currentFilter());
+      // ---- Hash sync -------------------------------------------------------
+      // #inverters and #inverters/inverex, so a brand view is shareable and the
+      // browser Back button walks back up the drill-down.
+      let writingHash = false;
+      function writeHash() {
+        let h = "";
+        if (state.category !== "all") {
+          h = "#" + state.category + (state.brand ? "/" + slug(state.brand) : "");
         }
+        if (("#" + window.location.hash.replace(/^#/, "")) === h || (h === "" && !window.location.hash)) return;
+        writingHash = true;
+        if (h) window.location.hash = h;
+        else history.replaceState(null, "", window.location.pathname + window.location.search);
+        setTimeout(() => { writingHash = false; }, 0);
+      }
+
+      function readHash() {
+        const raw = decodeURIComponent(window.location.hash.replace(/^#/, ""));
+        if (!raw) return { category: "all", brand: null };
+        const [cat, brandSlug] = raw.split("/");
+        if (!CATEGORY_LABELS[cat]) return null;                 // not ours — ignore
+        return { category: cat, brand: brandSlug ? brandBySlug(cat, brandSlug) : null };
+      }
+
+      function goTo(category, brand, push) {
+        state.category = category;
+        state.brand = brand || null;
+        // main.js owns the active class on the filter buttons.
+        document.querySelectorAll(".filter-bar .filter-btn").forEach((b) => {
+          b.classList.toggle("active", b.getAttribute("data-filter") === category);
+        });
+        if (push !== false) writeHash();
+        render();
+      }
+
+      // ---- Wiring ----------------------------------------------------------
+      grid.addEventListener("click", (e) => {
+        const card = e.target.closest(".brand-card");
+        if (!card) return;
+        goTo(card.getAttribute("data-category"), card.getAttribute("data-brand"));
+        trailEl.scrollIntoView({ behavior: "smooth", block: "start" });
       });
 
-      // Deep links: products.html#inverters from the header dropdown / category strip.
-      // Run on `load` (not DOMContentLoaded) so main.js has defined applyProductFilter,
-      // and again on hashchange so navigating between category links re-filters instead
-      // of silently leaving the previous category showing.
-      function applyHash() {
-        const hash = decodeURIComponent(window.location.hash.replace("#", ""));
-        if (!hash) return;
-        if (!document.querySelector('.filter-bar .filter-btn[data-filter="' + hash + '"]')) return;
-        if (typeof window.applyProductFilter === "function") window.applyProductFilter(hash);
-      }
-      window.addEventListener("load", applyHash);
-      window.addEventListener("hashchange", applyHash);
+      crumbEl.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-go]");
+        if (!btn) return;
+        if (btn.getAttribute("data-go") === "all") goTo("all", null);
+        else goTo(state.category, null);
+      });
 
-      render();
+      backBtn.addEventListener("click", () => {
+        if (state.brand) goTo(state.category, null);
+        else goTo("all", null);
+      });
+
+      sortSelect.addEventListener("change", render);
+
+      // main.js (wireProductFilter) owns the filter buttons and their active
+      // class; it calls this after each click. Picking a category always drops
+      // back to the brand step rather than keeping the previous brand.
+      window.onProductFilterChange = (category) => {
+        if (category === state.category && !state.brand) return;
+        goTo(category, null);
+      };
+
+      window.addEventListener("hashchange", () => {
+        if (writingHash) return;
+        const next = readHash();
+        if (next) goTo(next.category, next.brand, false);
+      });
+
+      const initial = readHash();
+      if (initial) goTo(initial.category, initial.brand, false);
+      else render();
     });
   </script>
 
@@ -387,10 +614,10 @@
 
 <a href="#" class="wa-float" data-whatsapp data-msg="Hi FHE Traders, I'd like to enquire." aria-label="Chat on WhatsApp"><svg><use href="#icon-whatsapp"/></svg></a>
 
-<script src="js/products-data.js?v=20260910k"></script>
-<script src="js/wishlist.js?v=20260910k"></script>
-<script src="js/search.js?v=20260910k"></script>
-<script src="js/config.js?v=20260910k"></script>
-<script src="js/main.js?v=20260910k"></script>
+<script src="js/products-data.js?v=20260918-itel"></script>
+<script src="js/wishlist.js?v=20260918-itel"></script>
+<script src="js/search.js?v=20260918-itel"></script>
+<script src="js/config.js?v=20260918-itel"></script>
+<script src="js/main.js?v=20260918-itel"></script>
 </body>
 </html>

@@ -5,10 +5,25 @@
 // useful about THAT variant, not just re-send the same paragraph. This module
 // resolves a product + model name into:
 //
-//   { desc, image }
+//   { desc, image, specs }
 //
 //   desc   what this specific variant is / what it suits  (always returned)
 //   image  a variant-specific photo, when one exists      (may be null)
+//   specs  a spec list for THIS variant, when one exists  (may be null)
+//
+// A `models` entry may be written either way:
+//
+//   "6kW"                                  <- label only; desc is generated
+//                                             below and the card falls back to
+//                                             the product photo and specs
+//
+//   { label: "6kW",                        <- label plus real per-variant data
+//     image: "images/products/variants/crown-micro-6kw.jpg",
+//     specs: ["Rated output: 6000W", "System voltage: 48V", ...],
+//     desc:  "Optional paragraph; the generated one is used when omitted." }
+//
+// Explicit data always wins over the generated text. Mixing both shapes in one
+// `models` array is fine, so a line can be filled in one capacity at a time.
 //
 // Descriptions are derived per category from the model name, with an explicit
 // table for the fittings lines where each "model" is genuinely a different
@@ -88,6 +103,39 @@ const FITTING_ITEMS = {
     desc: "A rewireable three-pin plug for fitting to appliance flex. Screw terminals mean a damaged plug can be replaced without cutting the cable short.",
   },
 };
+
+// --------------------------------------------------------------------------
+// Model shape helpers
+//
+// `models` entries are either a plain label string or an object carrying that
+// variant's own photo and specs. Everything downstream — the grid chips, the
+// detail page, search — goes through these two so neither shape leaks out.
+// --------------------------------------------------------------------------
+function modelLabel(m) {
+  return (m && typeof m === "object") ? String(m.label || "") : String(m == null ? "" : m);
+}
+
+function normalizeModel(m) {
+  if (m && typeof m === "object") {
+    return {
+      label: String(m.label || ""),
+      image: m.image || null,
+      specs: (m.specs && m.specs.length) ? m.specs : null,
+      desc: m.desc || null,
+    };
+  }
+  return { label: String(m == null ? "" : m), image: null, specs: null, desc: null };
+}
+
+/** The normalised entry in product.models whose label matches `model`. */
+function findModel(product, model) {
+  const want = modelLabel(model);
+  const list = (product && product.models) || [];
+  for (const entry of list) {
+    if (modelLabel(entry) === want) return normalizeModel(entry);
+  }
+  return null;
+}
 
 // --------------------------------------------------------------------------
 // Helpers to read a figure out of a model label
@@ -211,80 +259,99 @@ const STAND_DESC = {
 // Public resolver
 // --------------------------------------------------------------------------
 function getVariantInfo(product, model) {
-  if (!product || !model) return { desc: null, image: null };
+  if (!product || !model) return { desc: null, image: null, specs: null };
   const cat = product.category;
-  const n = numFrom(model);
+  const label = modelLabel(model);
+  const n = numFrom(label);
+
+  // Real data supplied for this exact variant beats anything generated below.
+  // A partly-filled entry still falls through for whatever it leaves out.
+  const own = findModel(product, label);
+  const ownDesc = own && own.desc;
+  const ownImage = own && own.image;
+  const ownSpecs = own && own.specs;
+  if (ownDesc && ownImage && ownSpecs) {
+    return { desc: ownDesc, image: ownImage, specs: ownSpecs };
+  }
+  const merge = (out) => ({
+    desc: ownDesc || out.desc,
+    image: ownImage || out.image,
+    specs: ownSpecs || out.specs || null,
+  });
 
   // Fittings: each item is a distinct product with its own photo
   if (cat === "fittings") {
-    const item = FITTING_ITEMS[model];
+    const item = FITTING_ITEMS[label];
     if (item) {
-      return {
+      return merge({
         desc: item.desc,
         image: item.img ? "images/products/variants/" + item.img + ".jpg" : null,
-      };
+      });
     }
   }
 
-  if (cat === "solar-stands") return { desc: STAND_DESC[model] || null, image: null };
-  if (cat === "vfd") return { desc: vfdDesc(model), image: null };
-  if (cat === "wiring") return { desc: cableDesc(model), image: null };
+  if (cat === "solar-stands") return merge({ desc: STAND_DESC[label] || null, image: null });
+  if (cat === "vfd") return merge({ desc: vfdDesc(label), image: null });
+  if (cat === "wiring") return merge({ desc: cableDesc(label), image: null });
 
-  if (cat === "solar-panels" && n) return { desc: panelDesc(n), image: null };
-  if (cat === "inverters" && n) return { desc: inverterDesc(n, "hybrid inverter"), image: null };
-  if (cat === "batteries" && n) return { desc: batteryDesc(n, "LiFePO4 bank"), image: null };
+  if (cat === "solar-panels" && n) return merge({ desc: panelDesc(n), image: null });
+  if (cat === "inverters" && n) return merge({ desc: inverterDesc(n, "hybrid inverter"), image: null });
+  if (cat === "batteries" && n) return merge({ desc: batteryDesc(n, "LiFePO4 bank"), image: null });
 
   if (cat === "fans") {
-    if (/blade/i.test(model) && n) return { desc: bladeDesc(n), image: null };
-    if (/inch/i.test(model) && n) {
+    if (/blade/i.test(label) && n) return merge({ desc: bladeDesc(n), image: null });
+    if (/inch/i.test(label) && n) {
       const kind = /exhaust/i.test(product.name) ? "exhaust fan"
         : /pedestal/i.test(product.name) ? "pedestal fan"
         : /bracket/i.test(product.name) ? "bracket fan" : "fan";
-      return { desc: inchDesc(n, kind), image: null };
+      return merge({ desc: inchDesc(n, kind), image: null });
     }
   }
 
   if (cat === "lighting") {
-    if (n && /w$/i.test(String(model).trim())) {
+    if (n && /w$/i.test(label.trim())) {
       const kind = product.name.replace(/^LED\s+/i, "").toLowerCase();
-      return { desc: lightDesc(n, kind), image: null };
+      return merge({ desc: lightDesc(n, kind), image: null });
     }
     // colour / supply options on rope and neon
-    if (/white|rgb|red|blue|green|pink/i.test(model)) {
-      return {
-        desc: model + ". " + (/rgb/i.test(model)
+    if (/white|rgb|red|blue|green|pink/i.test(label)) {
+      return merge({
+        desc: label + ". " + (/rgb/i.test(label)
           ? "Colour-changing, driven by the supplied controller — used for signage and feature lighting rather than as a room light."
           : "A fixed-colour run, which holds its tone consistently along the whole length."),
         image: null,
-      };
+      });
     }
-    if (/per metre|per roll/i.test(model)) {
-      return {
-        desc: /roll/i.test(model)
+    if (/per metre|per roll/i.test(label)) {
+      return merge({
+        desc: /roll/i.test(label)
           ? "Sold as a full roll — the cheaper way to buy it for a large job, and it avoids joins mid-run."
           : "Sold by the metre, cut to the length you need at the marked intervals.",
         image: null,
-      };
+      });
     }
   }
 
   if (cat === "distribution" && n) {
-    if (/way/i.test(model)) {
-      return {
+    if (/way/i.test(label)) {
+      return merge({
         desc: n + "-way board: room for " + n + " breakers. Leave two or three ways spare — adding a circuit later is far cheaper than replacing the board.",
         image: null,
-      };
+      });
     }
-    if (/a$/i.test(String(model).trim())) {
-      return {
+    if (/a$/i.test(label.trim())) {
+      return merge({
         desc: n + "A breaker. Size it to the cable, not to the appliance: a breaker larger than the cable can carry removes the protection the cable needs.",
         image: null,
-      };
+      });
     }
   }
 
-  return { desc: null, image: null };
+  return merge({ desc: null, image: null });
 }
 
-// Expose for product.html
+// Expose for products.html, product.html and search.js
 window.getVariantInfo = getVariantInfo;
+window.modelLabel = modelLabel;
+window.normalizeModel = normalizeModel;
+window.findModel = findModel;
