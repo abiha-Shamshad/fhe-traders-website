@@ -16,6 +16,11 @@
 //   image       path under images/products/ — null falls back to the icon tile
 //   badge       "popular" | "new" | null
 //   brands      optional: brand names stocked, for type-level cards (fans, lighting)
+//   warranty    optional: the manufacturer's stated warranty for THIS model.
+//               Only set where a model-specific figure appears on the maker's
+//               own datasheet or website \u2014 never inferred from a sibling
+//               model, a review site or a retailer listing. Absent means we do
+//               not have it, and the card shows nothing rather than a guess.
 //   models      optional: selectable variants shown on the detail page, and as
 //               tappable chips on the brand drill-down cards
 //   modelsLabel optional: heading above the model chips (default "Available Models")
@@ -295,6 +300,7 @@ const PRODUCTS = [
     brands: ["Inverex"],
     modelsLabel: "Model",
     models: ["4.2kW / 24V"],
+    warranty: "5 years — 2 years product + 3 years service",
     shortDesc: "Veyron II Premium on a 24V bank — 4.2kW output, 8kW PV array, IP54 rated.",
     specs: [
       "Rated output: 4200W / 4200VA continuous, 8400VA surge",
@@ -316,6 +322,7 @@ const PRODUCTS = [
     brands: ["Inverex"],
     modelsLabel: "Model",
     models: ["6.2kW / 48V"],
+    warranty: "5 years — 2 years product + 3 years service",
     shortDesc: "48V Veyron II Premium — 6.2kW output, touch-screen LCD, WiFi app, IP54.",
     specs: [
       "Rated output: 6200W on a 48V battery bank",
@@ -337,6 +344,7 @@ const PRODUCTS = [
     brands: ["Inverex"],
     modelsLabel: "Model",
     models: ["6.6kW / 48V"],
+    warranty: "5 years",
     shortDesc: "Nitrox hybrid, 6.6kW with a 13.2kW dual-MPPT array and an IP65 enclosure.",
     specs: [
       "Rated output: 6600W, single phase 220/230V, 50Hz",
@@ -358,6 +366,7 @@ const PRODUCTS = [
     brands: ["Inverex"],
     modelsLabel: "Model",
     models: ["10kW / 48V"],
+    warranty: "5 years",
     shortDesc: "10kW Nitrox hybrid — 16kW array, 210A charge current, IP65 rated.",
     specs: [
       "Rated output: 10,000W, single phase 220/230V",
@@ -379,6 +388,7 @@ const PRODUCTS = [
     brands: ["Crown Micro"],
     modelsLabel: "Model",
     models: ["4kW / 24V"],
+    warranty: "4 years",
     shortDesc: "4000VA on a 24V bank with a 6kW array and 120A solar charging.",
     specs: [
       "Rated output: 4000VA / 4000W, surge 7200VA",
@@ -401,6 +411,7 @@ const PRODUCTS = [
     brands: ["Crown Micro"],
     modelsLabel: "Model",
     models: ["6kW / 48V"],
+    warranty: "4 years",
     shortDesc: "6000VA on 48V with a 9kW array and 12000VA of surge.",
     specs: [
       "Rated output: 6000VA / 6000W, surge 12000VA",
@@ -445,6 +456,7 @@ const PRODUCTS = [
     brands: ["Crown Micro"],
     modelsLabel: "Model",
     models: ["6kW / 48V"],
+    warranty: "4 years — 1 year comprehensive + 3 years free service",
     shortDesc: "The lightest 6kW in the range at 12kg, parallel to nine units.",
     specs: [
       "Rated output: 6000VA / 6000W (model EOI-VI-6KW), 1-phase in / 1-phase out",
@@ -467,6 +479,7 @@ const PRODUCTS = [
     brands: ["Crown Micro"],
     modelsLabel: "Model",
     models: ["6.5kW / 48V"],
+    warranty: "6 years",
     shortDesc: "Dual MPPT, a 9.6kW array and parallel operation to sixteen units.",
     specs: [
       "Rated output: 6500VA / 6500W (ELEGO-STAR-6.5KW)",
@@ -489,6 +502,7 @@ const PRODUCTS = [
     brands: ["Crown Micro"],
     modelsLabel: "Model",
     models: ["6.5kW / 48V"],
+    warranty: "10 years",
     shortDesc: "IP66 outdoor rated and 97.3% efficient, at under 25dB.",
     specs: [
       "Rated output: 6500VA / 6500W (ELEGO-OYSTER-6.5KW)",
@@ -511,6 +525,7 @@ const PRODUCTS = [
     brands: ["Crown Micro"],
     modelsLabel: "Model",
     models: ["8.2kW / 48V"],
+    warranty: "4 years — 1 year comprehensive + 3 years free service",
     shortDesc: "8200VA with a 12kW dual-MPPT array and 150A charging.",
     specs: [
       "Rated output: 8200VA / 8200W (NV-8.2KW), surge 16000VA",
@@ -533,6 +548,7 @@ const PRODUCTS = [
     brands: ["Crown Micro"],
     modelsLabel: "Model",
     models: ["8.6kW / 48V"],
+    warranty: "6 years",
     shortDesc: "8600VA with a 14kW array and a separate generator port.",
     specs: [
       "Rated output: 8600VA / 8600W (NOVA-8.6KW), surge 16000VA",
@@ -555,6 +571,7 @@ const PRODUCTS = [
     brands: ["Crown Micro"],
     modelsLabel: "Model",
     models: ["9.8kW / 48V"],
+    warranty: "6 years",
     shortDesc: "9800VA with 22000VA of surge — the largest single-phase Nova.",
     specs: [
       "Rated output: 9800VA / 9800W (NOVA-9.8KW), surge 22000VA",
@@ -577,6 +594,7 @@ const PRODUCTS = [
     brands: ["Crown Micro"],
     modelsLabel: "Model",
     models: ["10kW / 48V"],
+    warranty: "10 years",
     shortDesc: "10kW IP66 / NEMA 4X outdoor unit, 15kW array, 208A charging.",
     specs: [
       "Rated output: 10000VA / 10000W (ELEGO-OYSTER-10KW)",
@@ -599,6 +617,7 @@ const PRODUCTS = [
     brands: ["Itel"],
     modelsLabel: "Model",
     models: ["1kW / 12V"],
+    warranty: "3 years replacement + 5 years service",
     shortDesc: "1000VA 12V backup for lights, fans and a TV. IP54, 3.4kg.",
     specs: [
       "Rated output: 1000W / 1200VA off-grid, surge 2000W @2s",
@@ -621,6 +640,7 @@ const PRODUCTS = [
     brands: ["Itel"],
     modelsLabel: "Model",
     models: ["1.5kW / 12V"],
+    warranty: "3 years replacement + 5 years service",
     shortDesc: "1500W on 12V with a 105A mains charger for short grid windows.",
     specs: [
       "Rated output: 1500W / 1800VA off-grid, surge 3000W @2s",
@@ -643,6 +663,7 @@ const PRODUCTS = [
     brands: ["Itel"],
     modelsLabel: "Model",
     models: ["3kW / 24V"],
+    warranty: "3 years replacement + 5 years service",
     shortDesc: "3000W on a 24V bank — whole-flat backup with a 1.5kW array.",
     specs: [
       "Rated output: 3000W / 3600VA off-grid, surge 6000W @2s",
@@ -665,6 +686,7 @@ const PRODUCTS = [
     brands: ["Itel"],
     modelsLabel: "Model",
     models: ["3kW / 24V"],
+    warranty: "3 years replacement + 5 years service",
     shortDesc: "Same 3000W output, but a 4.5kW array on a 70–425V tracker.",
     specs: [
       "Rated output: 3000W / 3600VA off-grid, surge 6000W @2s",
@@ -687,6 +709,7 @@ const PRODUCTS = [
     brands: ["Itel"],
     modelsLabel: "Model",
     models: ["4kW / 24V"],
+    warranty: "3 years replacement",
     shortDesc: "4000W hybrid with a smart-load output and a 6kW array.",
     specs: [
       "Rated output: 4000W / 4000VA hybrid, surge 8000W @5s",
@@ -709,6 +732,7 @@ const PRODUCTS = [
     brands: ["Itel"],
     modelsLabel: "Model",
     models: ["6kW / 48V"],
+    warranty: "3 years replacement",
     shortDesc: "6000W on 48V, an 8kW array and parallel to twelve units.",
     specs: [
       "Rated output: 6000W / 6000VA hybrid, surge 12000W @5s",
@@ -731,6 +755,7 @@ const PRODUCTS = [
     brands: ["Itel"],
     modelsLabel: "Model",
     models: ["6.6kW / 48V"],
+    warranty: "5 years replacement",
     shortDesc: "IP66 outdoor hybrid, 13.2kW dual-MPPT array, time-of-use mode.",
     specs: [
       "Rated output: 6600W / 6600VA hybrid (IHY-6K6L1C), surge 13200VA @5s",
@@ -753,6 +778,7 @@ const PRODUCTS = [
     brands: ["Itel"],
     modelsLabel: "Model",
     models: ["8kW / 48V"],
+    warranty: "3 years replacement",
     shortDesc: "8kW hybrid with a 16kW array and 160A charging.",
     specs: [
       "Rated output: 8kW / 8kVA hybrid, surge 16kW @5s",
@@ -775,6 +801,7 @@ const PRODUCTS = [
     brands: ["Itel"],
     modelsLabel: "Model",
     models: ["12kW / 48V"],
+    warranty: "3 years replacement",
     shortDesc: "12kW with 24kW surge and 250A discharge — the largest Itel unit.",
     specs: [
       "Rated output: 12kW / 12kVA hybrid, surge 24kW @5s",

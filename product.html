@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20260918-stands2">
+<link rel="stylesheet" href="css/style.css?v=20260918-warranty">
 <style>
   .pdp-crumb-bar { border-bottom: 1px solid var(--border); background: var(--surface); }
   .pdp-crumb { display: flex; gap: 8px; font-size: 13.5px; color: var(--text-muted); flex-wrap: wrap; }
@@ -190,6 +190,13 @@
 
           <ul class="pdp-specs" id="pdp-specs"></ul>
 
+          <!-- Only rendered when the maker publishes a figure for this exact
+               model; absent is better than a guess on a warranty claim. -->
+          <p class="pdp-warranty" id="pdp-warranty" hidden>
+            <svg width="17" height="17"><use href="#icon-shield"/></svg>
+            <span><strong>Manufacturer warranty:</strong> <span id="pdp-warranty-text"></span></span>
+          </p>
+
           <p id="pdp-description"></p>
 
           <div class="pdp-actions">
@@ -321,8 +328,8 @@
 
 <a href="#" class="wa-float" data-whatsapp data-msg="Hi FHE Traders, I'd like to enquire." aria-label="Chat on WhatsApp"><svg><use href="#icon-whatsapp"/></svg></a>
 
-<script src="js/products-data.js?v=20260918-stands2"></script>
-<script src="js/variants.js?v=20260918-stands2"></script>
+<script src="js/products-data.js?v=20260918-warranty"></script>
+<script src="js/variants.js?v=20260918-warranty"></script>
 <script>
   (function renderProductPage() {
     var CATEGORY_LABELS = {
@@ -441,6 +448,11 @@
       });
     }
     renderSpecs(product.specs);
+
+    if (product.warranty) {
+      document.getElementById("pdp-warranty-text").textContent = product.warranty;
+      document.getElementById("pdp-warranty").hidden = false;
+    }
 
     // Brands stocked — shown on type-level cards (fans, lighting, cables)
     var brandsEl = document.getElementById("pdp-brands");
@@ -583,10 +595,10 @@
     window.__pdpProduct = product;
   })();
 </script>
-<script src="js/wishlist.js?v=20260918-stands2"></script>
-<script src="js/search.js?v=20260918-stands2"></script>
-<script src="js/config.js?v=20260918-stands2"></script>
-<script src="js/main.js?v=20260918-stands2"></script>
+<script src="js/wishlist.js?v=20260918-warranty"></script>
+<script src="js/search.js?v=20260918-warranty"></script>
+<script src="js/config.js?v=20260918-warranty"></script>
+<script src="js/main.js?v=20260918-warranty"></script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const product = window.__pdpProduct;

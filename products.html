@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20260918-stands2">
+<link rel="stylesheet" href="css/style.css?v=20260918-warranty">
 </head>
 <body>
 
@@ -325,6 +325,19 @@
         return '<p class="product-model-hint">' + p.models.length + ' options available</p>';
       }
 
+      // Shown only where the maker publishes a figure for this exact model.
+      // Nothing is rendered otherwise — a warranty is a commitment, so a blank
+      // is safer than an inherited or assumed number.
+      function warrantyLine(p) {
+        if (!p.warranty) return "";
+        // Cards get the headline term only; the detail page carries the full
+        // wording, including any product/service split.
+        const headline = p.warranty.split(/\s+[—+]\s+/)[0];
+        return '<p class="card-warranty">' +
+          '<svg width="14" height="14"><use href="#icon-shield"/></svg>' +
+          'Warranty: ' + esc(headline) + '</p>';
+      }
+
       function cardHtml(p, withChips) {
         const catLabel = CATEGORY_LABELS[p.category] || p.category;
         const badgeHtml = p.badge === "popular" ? '<span class="product-badge badge-popular">Popular</span>'
@@ -336,6 +349,7 @@
             '<div class="product-body">' +
               '<h3><a href="' + url + '">' + esc(p.name) + '</a></h3>' +
               '<p>' + esc(p.shortDesc) + '</p>' +
+              warrantyLine(p) +
               (withChips ? wattChips(p) : modelHint(p)) +
               '<div class="product-actions">' +
                 '<a href="' + url + '" class="btn btn-outline-dark btn-sm" style="flex:1;">Details</a>' +
@@ -624,10 +638,10 @@
 
 <a href="#" class="wa-float" data-whatsapp data-msg="Hi FHE Traders, I'd like to enquire." aria-label="Chat on WhatsApp"><svg><use href="#icon-whatsapp"/></svg></a>
 
-<script src="js/products-data.js?v=20260918-stands2"></script>
-<script src="js/wishlist.js?v=20260918-stands2"></script>
-<script src="js/search.js?v=20260918-stands2"></script>
-<script src="js/config.js?v=20260918-stands2"></script>
-<script src="js/main.js?v=20260918-stands2"></script>
+<script src="js/products-data.js?v=20260918-warranty"></script>
+<script src="js/wishlist.js?v=20260918-warranty"></script>
+<script src="js/search.js?v=20260918-warranty"></script>
+<script src="js/config.js?v=20260918-warranty"></script>
+<script src="js/main.js?v=20260918-warranty"></script>
 </body>
 </html>
