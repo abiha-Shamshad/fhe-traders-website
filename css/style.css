@@ -1790,3 +1790,11 @@ body.intro-revealing .hero-inner > *:nth-child(6) { animation-delay: 0.40s; }
 .pdp-warranty[hidden] { display: none; }
 .pdp-warranty svg { color: var(--green-700); flex-shrink: 0; margin-top: 2px; }
 .pdp-warranty strong { color: var(--ink-900); }
+
+/* Incremental catalog paint: the sentinel row under the grid. */
+.catalog-more {
+  display: flex;
+  justify-content: center;
+  padding: 28px 0 4px;
+}
+.catalog-more[hidden] { display: none; }

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20260919-split">
+<link rel="stylesheet" href="css/style.css?v=20260919-batch">
 </head>
 <body>
 
@@ -180,6 +180,12 @@
 
       <div class="grid grid-4" id="product-grid"></div>
 
+      <!-- Sentinel for the incremental paint; the button is the no-JS-observer
+           fallback and stays useful as an explicit control either way. -->
+      <div class="catalog-more" id="catalog-more" hidden>
+        <button type="button" class="btn btn-outline-dark" id="catalog-more-btn">Show more</button>
+      </div>
+
     </div>
   </section>
 
@@ -196,6 +202,8 @@
       const sortSelect = document.getElementById("sort-select");
       const sortWrap = document.getElementById("sort-wrap");
       const countEl = document.getElementById("result-count");
+      const moreWrap = document.getElementById("catalog-more");
+      const moreBtn = document.getElementById("catalog-more-btn");
       const trailEl = document.getElementById("catalog-trail");
       const crumbEl = document.getElementById("catalog-crumb");
       const backBtn = document.getElementById("catalog-back");
@@ -203,6 +211,10 @@
       // How many capacity chips fit on a card before it starts to look like a
       // spreadsheet. The rest collapse into a "+N more" chip.
       const MAX_CHIPS = 8;
+
+      // Cards painted per batch. Comfortably more than one screenful at any
+      // breakpoint, so the grid never looks short while the rest streams in.
+      const BATCH = 36;
 
       // category: "all" or a CATEGORY_LABELS key. brand: null or a brand name.
       const state = { category: "all", brand: null };
@@ -467,6 +479,10 @@
             return a.localeCompare(b);
           });
           grid.innerHTML = keys.map((b) => brandCardHtml(b, groups.get(b), state.category)).join("");
+          // Brand cards are never numerous enough to batch; make sure a
+          // half-finished product list is not still queued behind them.
+          pending = [];
+          moreWrap.hidden = true;
           countEl.textContent = keys.length + (keys.length === 1 ? " brand in " : " brands in ") +
             (CATEGORY_LABELS[state.category] || state.category);
           return;
@@ -477,15 +493,48 @@
         list = sorted(list);
 
         // Chips are the point of the brand view; at the top level they would
-        // just add noise to 73 cards, so the option count stays instead.
+        // just add noise, so the option count stays instead.
         const withChips = !!state.brand || (state.category !== "all" && !hasBrandStep(state.category));
-        grid.innerHTML = list.map((p) => cardHtml(p, withChips)).join("");
-        if (typeof wireWhatsAppButtons === "function") wireWhatsAppButtons();
+        renderBatched(list, withChips);
 
         countEl.textContent = state.category === "all"
           ? "Showing all " + list.length + " products"
           : "Showing " + list.length + (list.length === 1 ? " product in " : " products in ") +
             (state.brand ? state.brand : (CATEGORY_LABELS[state.category] || state.category));
+      }
+
+      // ---- Incremental grid paint -----------------------------------------
+      // "All products" is 300+ cards. Building that in one innerHTML pass is a
+      // visible stall on a mid-range phone, so paint a screenful and append the
+      // rest as the sentinel scrolls into view. Without IntersectionObserver
+      // the button below is a plain "show more".
+      let pending = [];
+      let pendingChips = false;
+
+      function appendBatch() {
+        if (!pending.length) { moreWrap.hidden = true; return; }
+        const slice = pending.splice(0, BATCH);
+        grid.insertAdjacentHTML("beforeend", slice.map((p) => cardHtml(p, pendingChips)).join(""));
+        if (typeof wireWhatsAppButtons === "function") wireWhatsAppButtons();
+        moreWrap.hidden = pending.length === 0;
+        if (pending.length) moreBtn.textContent = "Show " + Math.min(BATCH, pending.length) + " more";
+      }
+
+      function renderBatched(list, withChips) {
+        pending = list.slice();
+        pendingChips = withChips;
+        grid.innerHTML = "";
+        appendBatch();
+        // Fill the first screen immediately so short lists never need a tap.
+        if (pending.length && list.length <= BATCH * 2) appendBatch();
+      }
+
+      moreBtn.addEventListener("click", appendBatch);
+
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver((entries) => {
+          if (entries.some((e) => e.isIntersecting)) appendBatch();
+        }, { rootMargin: "600px 0px" }).observe(moreWrap);
       }
 
       // ---- Hash sync -------------------------------------------------------
@@ -499,8 +548,13 @@
         }
         if (("#" + window.location.hash.replace(/^#/, "")) === h || (h === "" && !window.location.hash)) return;
         writingHash = true;
-        if (h) window.location.hash = h;
-        else history.replaceState(null, "", window.location.pathname + window.location.search);
+        // Clearing the hash needs replaceState, which throws on a file:// URL
+        // and in some sandboxed contexts. The address bar is cosmetic here, so
+        // never let it take the navigation down with it.
+        try {
+          if (h) window.location.hash = h;
+          else history.replaceState(null, "", window.location.pathname + window.location.search);
+        } catch (e) { /* leave the URL as it is */ }
         setTimeout(() => { writingHash = false; }, 0);
       }
 
@@ -528,7 +582,7 @@
         const card = e.target.closest(".brand-card");
         if (!card) return;
         goTo(card.getAttribute("data-category"), card.getAttribute("data-brand"));
-        trailEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (trailEl.scrollIntoView) trailEl.scrollIntoView({ behavior: "smooth", block: "start" });
       });
 
       crumbEl.addEventListener("click", (e) => {
@@ -651,10 +705,10 @@
 
 <a href="#" class="wa-float" data-whatsapp data-msg="Hi FHE Traders, I'd like to enquire." aria-label="Chat on WhatsApp"><svg><use href="#icon-whatsapp"/></svg></a>
 
-<script src="js/products-data.js?v=20260919-split"></script>
-<script src="js/wishlist.js?v=20260919-split"></script>
-<script src="js/search.js?v=20260919-split"></script>
-<script src="js/config.js?v=20260919-split"></script>
-<script src="js/main.js?v=20260919-split"></script>
+<script src="js/products-data.js?v=20260919-batch"></script>
+<script src="js/wishlist.js?v=20260919-batch"></script>
+<script src="js/search.js?v=20260919-batch"></script>
+<script src="js/config.js?v=20260919-batch"></script>
+<script src="js/main.js?v=20260919-batch"></script>
 </body>
 </html>
