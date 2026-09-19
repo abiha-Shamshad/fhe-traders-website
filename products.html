@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Products — FHE Traders</title>
-<meta name="description" content="Browse solar panels (Canadian, Longi, Jinko, JA, TCL, Crown), galvanized steel stands in C and U channel, inverters from Inverex, Crown Micro, Crown Lifan, Itel, Maxpower, CoreTECH and Solis, lithium batteries, VFD drives, fans, lighting, fittings and cable from FHE Traders. Enquire on WhatsApp.">
+<meta name="description" content="Browse solar panels (Canadian, Longi, Jinko, JA, TCL, Crown), galvanized steel stands in C and U channel, inverters from Inverex, Crown Micro, Crown Lifan, Itel, Maxpower, CoreTECH and Solis, the Huawei ESM-48100B1 lithium battery, VFD drives, fans, lighting, fittings and cable from FHE Traders. Enquire on WhatsApp.">
 <link rel="icon" type="image/png" href="images/site/favicon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20260918-brands">
+<link rel="stylesheet" href="css/style.css?v=20260919-batt">
 </head>
 <body>
 
@@ -245,7 +245,13 @@
         if (category === "all") return false;
         const groups = brandGroups(category);
         if (groups.size >= 2) return true;
-        return groups.size === 1 && !groups.has(UNBRANDED);
+        // A lone brand card in front of a single product is two clicks to reach
+        // one thing, so go straight to it.
+        if (groups.size === 1) {
+          const only = groups.values().next().value;
+          return only.length > 1 && !groups.has(UNBRANDED);
+        }
+        return false;
       }
 
       function brandBySlug(category, wanted) {
@@ -641,10 +647,10 @@
 
 <a href="#" class="wa-float" data-whatsapp data-msg="Hi FHE Traders, I'd like to enquire." aria-label="Chat on WhatsApp"><svg><use href="#icon-whatsapp"/></svg></a>
 
-<script src="js/products-data.js?v=20260918-brands"></script>
-<script src="js/wishlist.js?v=20260918-brands"></script>
-<script src="js/search.js?v=20260918-brands"></script>
-<script src="js/config.js?v=20260918-brands"></script>
-<script src="js/main.js?v=20260918-brands"></script>
+<script src="js/products-data.js?v=20260919-batt"></script>
+<script src="js/wishlist.js?v=20260919-batt"></script>
+<script src="js/search.js?v=20260919-batt"></script>
+<script src="js/config.js?v=20260919-batt"></script>
+<script src="js/main.js?v=20260919-batt"></script>
 </body>
 </html>
