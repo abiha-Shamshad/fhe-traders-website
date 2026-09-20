@@ -19,6 +19,21 @@
   .pdp-visual .product-thumb svg { width: 38%; height: 38%; }
   .pdp-visual .product-thumb img { padding: 26px; }
   .pdp-visual .product-thumb.has-photo { border: 1px solid var(--border); }
+  /* Thumbnail strip under the main photo. Stays hidden until a product has
+     more than one usable image, so single-photo products look exactly as
+     they did before. */
+  .pdp-thumbs { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .pdp-thumbs[hidden] { display: none; }
+  .pdp-thumb-btn {
+    width: 72px; height: 72px; padding: 0; flex: 0 0 auto; cursor: pointer;
+    border: 1.5px solid var(--border); border-radius: var(--radius-md);
+    background: #ffffff; overflow: hidden; line-height: 0;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .pdp-thumb-btn img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+  .pdp-thumb-btn:hover { border-color: var(--amber-500); transform: translateY(-2px); }
+  .pdp-thumb-btn.active { border-color: var(--red-600); border-width: 2px; }
+  .pdp-thumb-btn:focus-visible { outline: 2px solid var(--amber-500); outline-offset: 2px; }
   .pdp-info h1 { font-size: clamp(24px, 3vw, 32px); margin-bottom: 10px; }
   .pdp-meta-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
   .pdp-specs { margin: 0 0 22px; }
@@ -171,6 +186,7 @@
             <img id="pdp-thumb-img" alt="" hidden>
             <svg id="pdp-thumb-icon"><use href="#icon-panel"/></svg>
           </div>
+          <div class="pdp-thumbs" id="pdp-thumbs" role="group" aria-label="Product photos" hidden></div>
         </div>
 
         <div class="pdp-info">
@@ -422,6 +438,87 @@
       thumb.classList.add("has-photo");
     }
 
+    // ---- Photo gallery --------------------------------------------------
+    // `image` stays the single card photo the grid uses. `images` is the
+    // optional extra set for this page. A product with only one usable file
+    // shows no strip at all, so nothing changes for the ones we have not
+    // photographed yet. Files are probed before they are offered, because a
+    // dead path should leave the strip shorter rather than show a broken tile.
+    var thumbsEl = document.getElementById("pdp-thumbs");
+
+    function galleryCandidates(variantImage) {
+      var out = [];
+      function push(src) {
+        if (src && out.indexOf(src) === -1) out.push(src);
+      }
+      push(variantImage);
+      push(product.image);
+      (product.images || []).forEach(push);
+      return out;
+    }
+
+    function probeAll(list, done) {
+      var usable = [];
+      var pending = list.length;
+      if (!pending) return done(usable);
+      list.forEach(function (src, i) {
+        var probe = new Image();
+        probe.onload = function () { usable[i] = src; if (!--pending) done(usable.filter(Boolean)); };
+        probe.onerror = function () { if (!--pending) done(usable.filter(Boolean)); };
+        probe.src = src;
+      });
+    }
+
+    function setMainImage(src) {
+      if (!src || thumbImg.getAttribute("src") === src) return;
+      thumbImg.src = src;
+      thumbImg.hidden = false;
+      thumb.classList.add("has-photo");
+      thumbIcon.hidden = true;
+      markActive(src);
+    }
+
+    function markActive(src) {
+      Array.prototype.forEach.call(thumbsEl.children, function (btn) {
+        var on = btn.getAttribute("data-src") === src;
+        btn.classList.toggle("active", on);
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+    }
+
+    function renderThumbs(list, activeSrc) {
+      thumbsEl.innerHTML = "";
+      // One photo needs no picker.
+      if (list.length < 2) { thumbsEl.hidden = true; return; }
+      list.forEach(function (src, i) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "pdp-thumb-btn";
+        btn.setAttribute("data-src", src);
+        btn.setAttribute("aria-label", "Photo " + (i + 1) + " of " + list.length);
+        var im = document.createElement("img");
+        im.src = src;
+        im.alt = "";
+        im.loading = "lazy";
+        im.decoding = "async";
+        btn.appendChild(im);
+        btn.addEventListener("click", function () { setMainImage(src); });
+        thumbsEl.appendChild(btn);
+      });
+      thumbsEl.hidden = false;
+      markActive(activeSrc || list[0]);
+    }
+
+    // Rebuilt whenever the active variant changes, since a variant photo joins
+    // the strip and leads it.
+    function refreshGallery(variantImage) {
+      var wanted = galleryCandidates(variantImage);
+      probeAll(wanted, function (usable) {
+        renderThumbs(usable, usable[0]);
+        setMainImage(usable[0]);
+      });
+    }
+
     document.getElementById("pdp-thumb-pill").textContent = categoryLabel;
 
     var badgeEl = document.getElementById("pdp-badge");
@@ -483,7 +580,6 @@
     // Selecting a model swaps in that variant's photo and description where we
     // have them, and restores the product-level ones when it is deselected.
     var baseDesc = product.description || "";
-    var baseImage = product.image || null;
     var baseSpecs = product.specs || [];
 
     function applyVariant(model) {
@@ -508,19 +604,9 @@
         : (product.shortDesc || "");
 
       // --- photo ---
-      var target = (model && info.image) ? info.image : baseImage;
-      if (!target) return;
-      if (thumbImg.getAttribute("src") === target) return;
-      // Only swap once we know the file loads, so a missing variant photo
-      // leaves the product photo in place instead of blanking the panel.
-      var probe = new Image();
-      probe.onload = function () {
-        thumbImg.src = target;
-        thumbImg.hidden = false;
-        thumb.classList.add("has-photo");
-        thumbIcon.hidden = true;
-      };
-      probe.src = target;
+      // The gallery probes every candidate before rendering, so a missing
+      // variant photo just drops out of the strip and the product photo leads.
+      refreshGallery((model && info.image) ? info.image : null);
     }
 
     var modelsWrap = document.getElementById("pdp-models");
@@ -557,9 +643,12 @@
         preselect.classList.add("selected");
         selectedModel = modelLabelOf(preselect.textContent);
         updateWhatsAppMessage();
-        applyVariant(selectedModel);
       }
     }
+
+    // One unconditional pass, so the gallery is built whether or not this
+    // product has models and whether or not a chip arrived preselected.
+    applyVariant(selectedModel);
 
     var related = (typeof PRODUCTS !== "undefined" ? PRODUCTS : [])
       .filter(function (p) { return p.category === product.category && p.id !== product.id; })

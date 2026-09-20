@@ -13,7 +13,13 @@
 //   category    must match a key in CATEGORY_LABELS (products.html / product.html)
 //               and a data-category colour rule in css/style.css
 //   icon        SVG symbol id, used as the fallback when `image` is null
-//   image       path under images/products/ — null falls back to the icon tile
+//   image       path under images/products/ — null falls back to the icon tile.
+//               This is the single photo the grid card shows.
+//   images      optional: extra photos for the detail page only, as a list of
+//               paths. The gallery there shows `image` first, then these, and
+//               the thumbnail strip stays hidden unless two or more load. A
+//               path that 404s is dropped rather than shown broken, so adding
+//               a file later is enough to make it appear.
 //   badge       "popular" | "new" | null
 //   brands      optional: brand names stocked, for type-level cards (fans, lighting)
 //   warranty    optional: the manufacturer's stated warranty for THIS model.
@@ -1732,7 +1738,7 @@ const PRODUCTS = [
     badge: "popular",
     modelsLabel: "Profile",
     models: ["C Type — 2″ × 1″, 14 gauge"],
-    shortDesc: "2″ × 1″ C-section rail in 14 gauge galvanized steel, 7 ft 3 in lengths.",
+    shortDesc: "2″ × 1″ lipped C-section rail in 14 gauge galvanized steel, 7 ft 3 in lengths — the stiffer profile.",
     specs: [
       "Section: C profile, 2 inch × 1 inch, roll-formed steel",
       "Material: 14 gauge steel, hot-dip galvanized after forming",
@@ -1740,9 +1746,10 @@ const PRODUCTS = [
       "Fixing holes: 12mm round at 100mm centres along the web",
       "Slotted holes: 38mm × 18mm on the top face, with 9mm and 22mm profile details",
       "Lip return: 12mm, giving the section its stiffness in bending",
+      "Deeper and stiffer than the 1.5″ U type, for longer spans and exposed sites",
       "Used for: main rails and purlins on two, three and four level stands",
     ],
-    description: "The C-section rail that a two, three or four level stand is built from, and the lighter and more economical of the two profiles we stock. Rolled from 14 gauge steel rather than welded from plate, so it holds a consistent section along its whole length and carries load in bending far better than its weight suggests — the 12mm lip return is doing most of that work, because folding the edge back stops the open side of the channel from spreading under load. The 12mm holes at 100mm centres and the 38 × 18mm slots mean clamps and cross-members land on a fixed grid, so a stand can be set out and bolted without drilling anything on the roof. Hot-dip galvanized after forming, which matters: the zinc goes on after the holes are punched, so the cut edges are coated too. Supplied in 7 ft 3 in (87 inch) main lengths, two pieces per set. Message us on WhatsApp with your array size and we will work out the rail quantity.",
+    description: "The C-section rail that a two, three or four level stand is built from, and the heavier and stiffer of the two profiles we stock. The lip is what names it: fold the edge of the channel back on itself and you get a C rather than a plain U, and that return is what stops the open side from spreading under load. Rolled from 14 gauge steel rather than welded from plate, so it holds a consistent section along its whole length and carries load in bending far better than its weight suggests — the 12mm lip return is doing most of that work, because folding the edge back stops the open side of the channel from spreading under load. The 12mm holes at 100mm centres and the 38 × 18mm slots mean clamps and cross-members land on a fixed grid, so a stand can be set out and bolted without drilling anything on the roof. Hot-dip galvanized after forming, which matters: the zinc goes on after the holes are punched, so the cut edges are coated too. Supplied in 7 ft 3 in (87 inch) main lengths, two pieces per set. It costs more per foot than the 1.5″ U type and is worth it where the run is long, the frame is tall, or the site is windy — on a small sheltered roof the U type does the same job for less. Message us on WhatsApp with your array size and we will work out the rail quantity.",
   },
   {
     id: "solar-stand-channel-u-type",
@@ -1753,16 +1760,16 @@ const PRODUCTS = [
     badge: null,
     modelsLabel: "Profile",
     models: ["U Type — 1.5″, 14 gauge"],
-    shortDesc: "1.5″ U-section rail in 14 gauge galvanized steel — the heavier profile for exposed sites.",
+    shortDesc: "1.5″ U-section rail in 14 gauge galvanized steel — the lighter, more economical profile.",
     specs: [
       "Section: U profile, 1.5 inch, roll-formed steel",
       "Material: 14 gauge steel, hot-dip galvanized after forming",
-      "Slotted web for clamp positions, with round holes for through-bolts",
-      "Closed box-like section resists twisting better than an open C",
-      "Specified where wind loading rather than cost is the design driver",
-      "Used for: U-type stands on exposed and coastal sites",
+      "Slotted top face for clamp positions, with round holes through the sides",
+      "Smaller section than the 2″ × 1″ C type, so lighter per foot and cheaper",
+      "Specified where cost and handling matter more than span",
+      "Used for: L2 and L3 rooftop stands on ordinary domestic and shop roofs",
     ],
-    description: "The heavier of the two profiles. A U section is closed across the top rather than lipped, which makes it markedly stiffer in torsion — the failure mode that actually matters on an exposed roof, where wind lifts one corner of a panel and tries to twist the rail rather than simply bend it. Same 14 gauge steel and the same hot-dip galvanized finish as the C type, and the same slotted-and-drilled web so clamps and cross-members bolt up on a grid. It costs more and weighs more per metre, so it is worth specifying where the site is genuinely windy, coastal, or the array is tall enough that leverage on the frame is significant. On a sheltered inner-city roof the C type does the same job for less. Message us on WhatsApp for lengths and pricing.",
+    description: "The smaller and cheaper of the two sections, and the one most domestic rooftop stands are built from. At 1.5 inch it is a narrower channel than the 2″ × 1″ C type, so it weighs less per foot, costs less, and is easier to carry up a stair and onto a roof — which on a two or three panel job matters more than the extra span the bigger section would give you. Same 14 gauge steel and the same hot-dip galvanized finish as the C type, and the same slotted top face and drilled sides, so clamps and cross-members bolt up on a grid without drilling on site. Where it runs out is span and load: on a long run, a tall frame, or a genuinely exposed or coastal site, step up to the C type rather than adding more supports. Message us on WhatsApp for lengths and pricing.",
   },
 
   // ======================================================================
@@ -3051,6 +3058,10 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/invt-vfd-range.jpg",
+    images: [
+      "images/products/invt-vfd-lineup.jpg",
+      "images/products/invt-vfd.jpg",
+    ],
     badge: "popular",
     brands: ["INVT"],
     modelsLabel: "Power Range",
@@ -3075,6 +3086,10 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/invt-vfd-range.jpg",
+    images: [
+      "images/products/invt-vfd-lineup.jpg",
+      "images/products/invt-vfd.jpg",
+    ],
     badge: null,
     brands: ["INVT"],
     modelsLabel: "Power Range",
@@ -3099,6 +3114,10 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/invt-vfd-range.jpg",
+    images: [
+      "images/products/invt-vfd-lineup.jpg",
+      "images/products/invt-vfd.jpg",
+    ],
     badge: null,
     brands: ["INVT"],
     modelsLabel: "Power Range",
@@ -3123,6 +3142,10 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/invt-vfd-range.jpg",
+    images: [
+      "images/products/invt-vfd-lineup.jpg",
+      "images/products/invt-vfd.jpg",
+    ],
     badge: null,
     brands: ["INVT"],
     modelsLabel: "Power Range",
@@ -3147,6 +3170,10 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/invt-vfd-range.jpg",
+    images: [
+      "images/products/invt-vfd-lineup.jpg",
+      "images/products/invt-vfd.jpg",
+    ],
     badge: null,
     brands: ["INVT"],
     modelsLabel: "Power Range",
@@ -3171,6 +3198,10 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/invt-vfd-range.jpg",
+    images: [
+      "images/products/invt-vfd-lineup.jpg",
+      "images/products/invt-vfd.jpg",
+    ],
     badge: null,
     brands: ["INVT"],
     modelsLabel: "Power Range",
@@ -3195,6 +3226,10 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/invt-vfd-range.jpg",
+    images: [
+      "images/products/invt-vfd-lineup.jpg",
+      "images/products/invt-vfd.jpg",
+    ],
     badge: null,
     brands: ["INVT"],
     modelsLabel: "Power Range",
@@ -3219,6 +3254,10 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/invt-vfd-lineup.jpg",
+    images: [
+      "images/products/invt-vfd-range.jpg",
+      "images/products/invt-vfd.jpg",
+    ],
     badge: null,
     brands: ["INVT"],
     modelsLabel: "Power Range",
@@ -3243,6 +3282,10 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/invt-vfd-lineup.jpg",
+    images: [
+      "images/products/invt-vfd-range.jpg",
+      "images/products/invt-vfd.jpg",
+    ],
     badge: null,
     brands: ["INVT"],
     modelsLabel: "Power Range",
@@ -3267,6 +3310,10 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/invt-vfd-lineup.jpg",
+    images: [
+      "images/products/invt-vfd-range.jpg",
+      "images/products/invt-vfd.jpg",
+    ],
     badge: null,
     brands: ["INVT"],
     modelsLabel: "Power Range",
@@ -3291,6 +3338,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/crown-pridor-vfd-unit.jpg",
+    images: [
+      "images/products/crown-pridor-vfd.jpg",
+    ],
     badge: null,
     brands: ["Crown"],
     warranty: "18 months — complete replacement",
@@ -3318,6 +3368,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/crown-pridor-vfd.jpg",
+    images: [
+      "images/products/crown-pridor-vfd-unit.jpg",
+    ],
     badge: null,
     brands: ["Crown"],
     warranty: "18 months — complete replacement",
@@ -3345,6 +3398,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/crown-pridor-vfd.jpg",
+    images: [
+      "images/products/crown-pridor-vfd-unit.jpg",
+    ],
     badge: null,
     brands: ["Crown"],
     warranty: "18 months — complete replacement",
@@ -3372,6 +3428,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/crown-pridor-vfd.jpg",
+    images: [
+      "images/products/crown-pridor-vfd-unit.jpg",
+    ],
     badge: null,
     brands: ["Crown"],
     warranty: "18 months — complete replacement",
@@ -3399,6 +3458,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/crown-pridor-vfd.jpg",
+    images: [
+      "images/products/crown-pridor-vfd-unit.jpg",
+    ],
     badge: null,
     brands: ["Crown"],
     warranty: "18 months — complete replacement",
@@ -3426,6 +3488,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/crown-pridor-vfd.jpg",
+    images: [
+      "images/products/crown-pridor-vfd-unit.jpg",
+    ],
     badge: null,
     brands: ["Crown"],
     warranty: "18 months — complete replacement",
@@ -3453,6 +3518,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/crown-pridor-vfd.jpg",
+    images: [
+      "images/products/crown-pridor-vfd-unit.jpg",
+    ],
     badge: null,
     brands: ["Crown"],
     warranty: "18 months — complete replacement",
@@ -3627,6 +3695,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/inverex-king-pro-vfd.jpg",
+    images: [
+      "images/products/inverex-king-vfd.jpg",
+    ],
     badge: null,
     brands: ["Inverex"],
     warranty: "1 year",
@@ -3655,6 +3726,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/inverex-king-vfd.jpg",
+    images: [
+      "images/products/inverex-king-pro-vfd.jpg",
+    ],
     badge: null,
     brands: ["Inverex"],
     warranty: "1 year",
@@ -3683,6 +3757,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/inverex-king-vfd.jpg",
+    images: [
+      "images/products/inverex-king-pro-vfd.jpg",
+    ],
     badge: null,
     brands: ["Inverex"],
     warranty: "1 year",
@@ -3711,6 +3788,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/inverex-king-vfd.jpg",
+    images: [
+      "images/products/inverex-king-pro-vfd.jpg",
+    ],
     badge: null,
     brands: ["Inverex"],
     warranty: "1 year",
@@ -3739,6 +3819,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/inverex-king-vfd.jpg",
+    images: [
+      "images/products/inverex-king-pro-vfd.jpg",
+    ],
     badge: null,
     brands: ["Inverex"],
     warranty: "1 year",
@@ -3767,6 +3850,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/inverex-king-vfd.jpg",
+    images: [
+      "images/products/inverex-king-pro-vfd.jpg",
+    ],
     badge: null,
     brands: ["Inverex"],
     warranty: "1 year",
@@ -3795,6 +3881,9 @@ const PRODUCTS = [
     category: "vfd",
     icon: "icon-gauge",
     image: "images/products/inverex-king-vfd.jpg",
+    images: [
+      "images/products/inverex-king-pro-vfd.jpg",
+    ],
     badge: null,
     brands: ["Inverex"],
     warranty: "1 year",
