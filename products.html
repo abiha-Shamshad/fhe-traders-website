@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Products — FHE Traders</title>
-<meta name="description" content="Browse solar panels (Canadian, Longi, Jinko, JA, TCL, Crown), galvanized steel stands in C and U channel, inverters from Inverex, Crown Micro, Crown Lifan, Itel, Maxpower, CoreTECH and Solis, the Huawei ESM-48100B1 lithium battery, VFD drives, fans, lighting, fittings and cable from FHE Traders. Enquire on WhatsApp.">
+<meta name="description" content="Browse solar panels (Canadian, Longi, Jinko, JA, TCL, Crown), galvanized steel stands in C and U channel, inverters from Inverex, Crown Micro, Crown Lifan, Itel, Maxpower, CoreTECH and Solis, lithium batteries from Huawei, Inverex, GoodWe, Crown Micro and Crown Lifan, VFD drives, fans, lighting, fittings and cable from FHE Traders. Enquire on WhatsApp.">
 <link rel="icon" type="image/png" href="images/site/favicon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20260919-batch">
+<link rel="stylesheet" href="css/style.css?v=20260920-batt">
 </head>
 <body>
 
@@ -406,8 +406,12 @@
           if (stripped !== n) { n = stripped; break; }
         }
         // A trailing part number in brackets — "… Hybrid Inverter (PV12000)" —
-        // blocks the generic-tail trim, so take it off first.
+        // or a trailing rating — "… Lithium Battery — 5.12 kWh" — blocks the
+        // generic-tail trim, so take those off first.
         n = n.replace(/\s*\([^()]*\)\s*$/, "").trim();
+        // Spaced en/em dash only — a bare hyphen lives inside model numbers
+        // like "12.8-200AH" and "CMLB-51.2-230".
+        n = n.replace(/\s+[–—]\s+[\d.]+\s*(kWh|kVA|kW|Wh|W|Ah|V)\b.*$/i, "").trim();
         let prev;
         do { prev = n; n = n.replace(GENERIC_TAIL, "").trim(); } while (n !== prev);
         return n || "Standard range";
@@ -705,10 +709,10 @@
 
 <a href="#" class="wa-float" data-whatsapp data-msg="Hi FHE Traders, I'd like to enquire." aria-label="Chat on WhatsApp"><svg><use href="#icon-whatsapp"/></svg></a>
 
-<script src="js/products-data.js?v=20260919-batch"></script>
-<script src="js/wishlist.js?v=20260919-batch"></script>
-<script src="js/search.js?v=20260919-batch"></script>
-<script src="js/config.js?v=20260919-batch"></script>
-<script src="js/main.js?v=20260919-batch"></script>
+<script src="js/products-data.js?v=20260920-batt"></script>
+<script src="js/wishlist.js?v=20260920-batt"></script>
+<script src="js/search.js?v=20260920-batt"></script>
+<script src="js/config.js?v=20260920-batt"></script>
+<script src="js/main.js?v=20260920-batt"></script>
 </body>
 </html>
