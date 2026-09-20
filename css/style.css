@@ -949,6 +949,75 @@ svg { display: block; }
 }
 .product-card:hover .product-thumb img { transform: scale(1.05); }
 
+/* ==========================================================================
+   Card slideshow — products carrying an `images` list in products-data.js
+   show their angles on the grid card itself. The slides are stacked and
+   cross-faded rather than scrolled, so the tile never changes height and the
+   grid does not reflow while a card is cycling. Everything below only ever
+   applies to .has-slides, so single-photo cards are untouched.
+   ========================================================================== */
+.product-thumb.has-slides img.pslide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+.product-thumb.has-slides img.pslide.is-active { opacity: 1; }
+/* On a single-photo tile the opaque photo sits over the pill and badge and
+   hides them. The slides are mid-fade for half a second at a time, so without
+   this they would flash into view on every step. Hidden here to match what a
+   photo card already looks like. */
+.product-thumb.has-slides .product-category-pill,
+.product-thumb.has-slides .product-badge { display: none; }
+/* A slide whose file 404s is taken out of the rotation entirely. */
+.product-thumb.has-slides img.pslide.slide-failed { display: none; }
+
+.product-dots {
+  position: absolute;
+  left: 0; right: 0; bottom: 10px;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: auto;
+}
+.product-dots button {
+  width: 7px; height: 7px; padding: 0;
+  border: 0; border-radius: 50%;
+  background: rgba(10,16,28,0.28);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.product-dots button:hover { background: rgba(10,16,28,0.55); }
+.product-dots button.is-active { background: var(--red-600); transform: scale(1.35); }
+.product-dots button:focus-visible { outline: 2px solid var(--amber-500); outline-offset: 2px; }
+
+/* A quiet hint that the tile holds more than one photo, shown until the
+   card is hovered and the cycling takes over as its own signal. */
+.product-thumb.has-slides .slide-count {
+  position: absolute;
+  right: 10px; bottom: 8px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(10,16,28,0.6);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 999px;
+  transition: opacity 0.2s ease;
+}
+.product-card:hover .product-thumb.has-slides .slide-count { opacity: 0; }
+
+/* Motion is the whole point of the effect, so when it is not wanted the
+   slides stop cycling and the dots become the only way through them. */
+@media (prefers-reduced-motion: reduce) {
+  .product-thumb.has-slides img.pslide { transition: none; }
+}
+
 /* Photo tiles get a white plate, so the category gradient reads only as a thin
    frame — keeps the shelf colour-coding without tinting the product itself. */
 .product-thumb.has-photo { background: #ffffff !important; padding: 0; }

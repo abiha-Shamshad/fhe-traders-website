@@ -312,12 +312,42 @@
       // than leaving a broken-image box sitting in the grid.
       function thumbHtml(p, badgeHtml, catLabel) {
         const hasPhoto = !!p.image;
-        const inner = hasPhoto
-          ? '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy" decoding="async" ' +
+        // The card shows `image` first, then anything in `images`. Two or more
+        // and the tile becomes a slideshow; one and it stays the plain photo
+        // tile it has always been.
+        const shots = hasPhoto ? [p.image].concat(p.images || []).filter((v, i, a) => a.indexOf(v) === i) : [];
+        const isSlides = shots.length > 1;
+
+        let inner;
+        if (isSlides) {
+          inner = shots.map((src, i) =>
+            '<img class="pslide' + (i === 0 ? " is-active" : "") + '" data-idx="' + i + '" src="' + esc(src) + '" ' +
+            'alt="' + esc(p.name) + (i ? " — view " + (i + 1) : "") + '" ' +
+            // Only the first slide blocks paint; the rest arrive lazily.
+            (i ? 'loading="lazy" ' : '') + 'decoding="async" ' +
+            // A dead path drops out of the rotation instead of blanking the tile.
+            'onerror="this.classList.add(\'slide-failed\');">'
+          ).join("") +
+          '<svg><use href="#' + p.icon + '"/></svg>' +
+          '<span class="slide-count">' +
+            '<svg width="10" height="10"><use href="#icon-image"/></svg>' + shots.length +
+          '</span>' +
+          '<div class="product-dots">' +
+            shots.map((_, i) =>
+              '<button type="button" data-slide="' + i + '"' + (i === 0 ? ' class="is-active"' : '') +
+              ' aria-label="Photo ' + (i + 1) + '"></button>'
+            ).join("") +
+          '</div>';
+        } else if (hasPhoto) {
+          inner = '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy" decoding="async" ' +
             'onerror="this.classList.add(\'img-failed\');this.parentNode.classList.remove(\'has-photo\');">' +
-            '<svg><use href="#' + p.icon + '"/></svg>'
-          : '<svg><use href="#' + p.icon + '"/></svg>';
-        return '<div class="product-thumb' + (hasPhoto ? " has-photo" : "") + '">' +
+            '<svg><use href="#' + p.icon + '"/></svg>';
+        } else {
+          inner = '<svg><use href="#' + p.icon + '"/></svg>';
+        }
+
+        return '<div class="product-thumb' + (hasPhoto ? " has-photo" : "") +
+            (isSlides ? " has-slides" : "") + '">' +
           badgeHtml +
           '<span class="product-category-pill">' + esc(catLabel) + '</span>' +
           inner +
@@ -534,6 +564,90 @@
       }
 
       moreBtn.addEventListener("click", appendBatch);
+
+      // ---- Card slideshow --------------------------------------------------
+      // Cards arrive in batches from insertAdjacentHTML, so this is delegated
+      // off the grid rather than bound per card — nothing to re-wire when the
+      // next 36 land. Only one tile ever cycles at a time: a whole grid of
+      // animating thumbnails is noise, and it is the card under the pointer
+      // that the customer is actually looking at.
+      const CAN_HOVER = window.matchMedia("(hover: hover)").matches;
+      const WANTS_MOTION = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const SLIDE_MS = 1400;
+      let cycleTimer = null;
+      let cycleThumb = null;
+
+      function slidesOf(thumb) {
+        return Array.prototype.filter.call(
+          thumb.querySelectorAll("img.pslide"),
+          (im) => !im.classList.contains("slide-failed")
+        );
+      }
+
+      function showSlide(thumb, index) {
+        const slides = slidesOf(thumb);
+        if (!slides.length) return;
+        const i = ((index % slides.length) + slides.length) % slides.length;
+        slides.forEach((im, n) => im.classList.toggle("is-active", n === i));
+        const dots = thumb.querySelectorAll(".product-dots button");
+        // Dots are rendered one per source path; a failed slide leaves its dot
+        // pointing at nothing, so match on the slide's own position instead.
+        Array.prototype.forEach.call(dots, (d) => {
+          const target = slides[i];
+          d.classList.toggle("is-active", target && d.getAttribute("data-slide") === target.getAttribute("data-idx"));
+        });
+        thumb.setAttribute("data-slide-at", String(i));
+      }
+
+      function stopCycle() {
+        if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
+        if (cycleThumb) { showSlide(cycleThumb, 0); cycleThumb = null; }
+      }
+
+      function startCycle(thumb) {
+        if (cycleThumb === thumb) return;
+        stopCycle();
+        if (!WANTS_MOTION) return;
+        if (slidesOf(thumb).length < 2) return;
+        cycleThumb = thumb;
+        let i = 0;
+        cycleTimer = setInterval(function () {
+          i += 1;
+          showSlide(thumb, i);
+        }, SLIDE_MS);
+      }
+
+      if (CAN_HOVER) {
+        // mouseenter does not bubble, so delegate on mouseover and ignore moves
+        // that stay inside the same tile.
+        grid.addEventListener("mouseover", function (e) {
+          const thumb = e.target.closest && e.target.closest(".product-thumb.has-slides");
+          if (thumb) startCycle(thumb);
+          else if (cycleThumb && !cycleThumb.contains(e.target)) stopCycle();
+        });
+        grid.addEventListener("mouseleave", stopCycle);
+        grid.addEventListener("focusin", function (e) {
+          const card = e.target.closest && e.target.closest(".product-card");
+          const thumb = card && card.querySelector(".product-thumb.has-slides");
+          if (thumb) startCycle(thumb);
+        });
+      }
+
+      // Tapping a dot picks a photo and takes the tile off autoplay, so a phone
+      // user can hold on one angle. The dots sit above the card's link, and the
+      // tile is inside an <a>, so the tap must not navigate.
+      grid.addEventListener("click", function (e) {
+        const dot = e.target.closest && e.target.closest(".product-dots button");
+        if (!dot) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const thumb = dot.closest(".product-thumb");
+        stopCycle();
+        const slides = slidesOf(thumb);
+        const wanted = dot.getAttribute("data-slide");
+        const at = slides.findIndex((im) => im.getAttribute("data-idx") === wanted);
+        showSlide(thumb, at < 0 ? 0 : at);
+      });
 
       if ("IntersectionObserver" in window) {
         new IntersectionObserver((entries) => {
