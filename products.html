@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20260920-lv">
+<link rel="stylesheet" href="css/style.css?v=20260920-slides">
 </head>
 <body>
 
@@ -584,6 +584,21 @@
         );
       }
 
+      // Slides past the first are lazy, so on a cold card they are still
+      // arriving when the cycle starts. Fading to one of those shows an empty
+      // tile, so warm them on hover and only ever step onto a slide that has
+      // actually decoded.
+      function warmSlides(thumb) {
+        slidesOf(thumb).forEach((im) => {
+          if (im.getAttribute("loading") === "lazy") im.setAttribute("loading", "eager");
+          if (!im.complete) { const w = new Image(); w.src = im.src; }
+        });
+      }
+
+      function isReady(im) {
+        return im.complete && im.naturalWidth > 0;
+      }
+
       function showSlide(thumb, index) {
         const slides = slidesOf(thumb);
         if (!slides.length) return;
@@ -607,13 +622,19 @@
       function startCycle(thumb) {
         if (cycleThumb === thumb) return;
         stopCycle();
+        warmSlides(thumb);
         if (!WANTS_MOTION) return;
         if (slidesOf(thumb).length < 2) return;
         cycleThumb = thumb;
         let i = 0;
         cycleTimer = setInterval(function () {
-          i += 1;
-          showSlide(thumb, i);
+          const slides = slidesOf(thumb);
+          // Step to the next slide that has decoded. If nothing else is ready
+          // yet, hold this frame rather than fading to an empty tile.
+          for (let step = 1; step <= slides.length; step++) {
+            const n = (i + step) % slides.length;
+            if (isReady(slides[n])) { i = n; showSlide(thumb, n); return; }
+          }
         }, SLIDE_MS);
       }
 
@@ -823,10 +844,10 @@
 
 <a href="#" class="wa-float" data-whatsapp data-msg="Hi FHE Traders, I'd like to enquire." aria-label="Chat on WhatsApp"><svg><use href="#icon-whatsapp"/></svg></a>
 
-<script src="js/products-data.js?v=20260920-lv"></script>
-<script src="js/wishlist.js?v=20260920-lv"></script>
-<script src="js/search.js?v=20260920-lv"></script>
-<script src="js/config.js?v=20260920-lv"></script>
-<script src="js/main.js?v=20260920-lv"></script>
+<script src="js/products-data.js?v=20260920-slides"></script>
+<script src="js/wishlist.js?v=20260920-slides"></script>
+<script src="js/search.js?v=20260920-slides"></script>
+<script src="js/config.js?v=20260920-slides"></script>
+<script src="js/main.js?v=20260920-slides"></script>
 </body>
 </html>
