@@ -155,19 +155,9 @@ function wireProductFilter() {
 
   const applyFilter = (category) => {
     buttons.forEach((b) => b.classList.toggle("active", b.getAttribute("data-filter") === category));
-    // Queried live, not cached: the products grid re-renders itself when the
-    // sort order changes, which would leave a cached NodeList pointing at
-    // detached cards and silently break filtering afterwards.
-    document.querySelectorAll("[data-category]").forEach((card) => {
-      const show = category === "all" || card.getAttribute("data-category") === category;
-      card.style.display = show ? "" : "none";
-    });
-    // products.html registers this so the "Showing N in ..." line stays in step.
+    // products.html registers this and re-renders the grid for the category.
     if (typeof window.onProductFilterChange === "function") window.onProductFilterChange(category);
   };
-
-  // Exposed so the catalog can re-apply the active filter after it re-renders.
-  window.applyProductFilter = applyFilter;
 
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => applyFilter(btn.getAttribute("data-filter")));
@@ -181,18 +171,28 @@ function wireProductFilter() {
   }
 }
 
-/** Simple gallery lightbox (icon/caption based placeholder content). */
+/** Gallery lightbox: shows the clicked item's title and caption. */
 function wireLightbox() {
   const lightbox = document.querySelector(".lightbox");
   if (!lightbox) return;
   const title = lightbox.querySelector("[data-lightbox-title]");
   const desc = lightbox.querySelector("[data-lightbox-desc]");
+  const img = lightbox.querySelector("[data-lightbox-img]");
+  const icon = lightbox.querySelector("[data-lightbox-icon]");
   const closeBtn = lightbox.querySelector(".lightbox-close");
 
   document.querySelectorAll(".gallery-item").forEach((item) => {
     item.addEventListener("click", () => {
       if (title) title.textContent = item.getAttribute("data-title") || "";
       if (desc) desc.textContent = item.getAttribute("data-desc") || "";
+      // The item's own photo if it loaded (a failed one removes itself),
+      // otherwise the generic image icon.
+      const photo = item.querySelector("img");
+      if (img) {
+        img.hidden = !photo;
+        if (photo) { img.src = photo.currentSrc || photo.src; img.alt = photo.alt; }
+      }
+      if (icon) icon.style.display = photo ? "none" : "";
       lightbox.classList.add("active");
     });
   });

@@ -28,14 +28,14 @@ hosting). Nothing needs compiling. `serve.py` doesn't need to go up.
 ```
 *.html                     one file per page
 css/style.css              all styling
-js/products-data.js        the product catalog (single source of truth)
+js/products-data.js        the product catalog, plus shared helpers (category names)
 js/variants.js             per-variant descriptions and photos
 js/main.js                 nav, filters, lightbox, WhatsApp links, share
 js/search.js               header search
 js/wishlist.js             wishlist (localStorage)
-js/config.js               WhatsApp number, business name, hours
+js/config.js               WhatsApp number
 js/intro.js                home page brand intro (home page only)
-images/products/           product photos, named <product-id>.jpg
+images/products/           product photos, linked from each entry's `image`
 images/products/variants/  per-variant photos (fittings items)
 images/site/               page photography, hero video, logo files
 ```
@@ -80,13 +80,19 @@ obvious on the navy footer.
 ## Editing the catalog
 
 `js/products-data.js` drives the products grid, the detail pages and search.
-Each entry is a brand- or type-level card; sizes and capacities live in
-`models`, which render as selectable chips on the detail page.
+Each entry is one product from one brand, so it gets one card on the grid.
+Where two brands stock the same item (Noor Fan, Al Falah and Al Marth fans;
+Evoo and FHE lighting), each brand gets its own card, and the id starts with
+the brand's slug (`al-falah-pedestal-fan-24-inch`). The grid groups cards by
+`brands[0]` to build the category → brand → products drill-down.
 
-Adding a product photo needs no code change — drop a file into
-`images/products/` named after the product's `id` (e.g.
-`images/products/inverex-inverter.jpg`). If the file is missing, the card falls
-back to a colour-coded category icon.
+Old ids from before the split (`led-bulbs-5w`) still resolve:
+`findProduct()` at the bottom of the data file falls back to the first brand's
+card, so bookmarks and saved wishlist items keep working.
+
+Photos come from each entry's `image` path (plus optional `images` for the
+detail-page gallery). If `image` is `null` or the file is missing, the card
+falls back to a colour-coded category icon.
 
 ## Contact details
 
@@ -112,12 +118,22 @@ supplied yet. Either fill it in on all 14 pages or drop the link.
 
 ## Known placeholders
 
-1. **Product photography** — catalog images are manufacturer/distributor shots
-   where those exist, and representative photos of the product *type* where no
-   official image could be sourced (Mekaal, Zec, Jee Kong, Skypower and several
-   others have no usable online imagery). Page photography is stock. Your own
-   photos of real jobs and shelf stock will outperform all of it; see
-   `image-credits.html` for sourcing and licensing.
+1. **Product photography** — 241 cards carry a genuine photo of that brand's
+   own product, from the maker's site or datasheet, the brand's own social
+   accounts, or a retailer listing of that exact item. The other 204 carry a
+   **representative photo of the product type**, because the brand publishes no
+   photography anywhere: Mekaal, Zec, Al Falah, Al Marth, the FHE house brand
+   and several Evoo lines. Those cards set `photoIsRepresentative: true`, which
+   makes the detail page say so, and `image-credits.html` discloses it too.
+   Most came from marketplace listings rather than free-licence stock, which is
+   a weaker position — see `images/products/generic/SOURCES.md` for the per-card
+   record and the gaps in it. Your own shelf photos beat all of it: drop a file
+   in with the same name and clear `photoIsRepresentative`.
+
+2. **Repeated photos within a series** — 39 images are still shared across sizes
+   of one line (one cable photo over 16 sizes, one MCB photo over 8 amperages,
+   one Solis render over 8 inverters). No photo is ever shared between two
+   different brands.
 
 ## Cache busting
 

@@ -9,20 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const results = document.getElementById("search-results");
   if (!toggleBtn || !panel || !input || !results) return;
 
-  const catLabel = {
-    "solar-panels": "Solar Panels",
-    "solar-stands": "Solar Stands",
-    "inverters": "Inverters",
-    "batteries": "Lithium Batteries",
-    "vfd": "VFD Drives",
-    "fans": "Fans",
-    "lighting": "Lighting",
-    "fittings": "Fittings",
-    "wiring": "Wiring & Cables",
-    "distribution": "Distribution & Breakers",
-    "security": "Security Systems",
-    "appliances": "Home Appliances",
-  };
+  const catLabel = typeof CATEGORY_LABELS !== "undefined" ? CATEGORY_LABELS : {};
 
   const open = () => {
     panel.classList.add("active");
@@ -81,10 +68,10 @@ document.addEventListener("DOMContentLoaded", () => {
     `).join("");
   };
 
+  // Quotes too: the query also lands inside a data-msg="..." attribute.
   function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
   renderResults("");

@@ -35,7 +35,6 @@
 
   const finish = () => {
     body.classList.remove("intro-pending");
-    body.classList.add("intro-done");
     overlay.remove();
   };
 

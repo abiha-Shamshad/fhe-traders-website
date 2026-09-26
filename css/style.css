@@ -286,7 +286,6 @@ svg { display: block; }
   position: absolute;
   top: calc(100% + 10px);
   left: 50%;
-  transform: translateX(-50%);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -483,7 +482,6 @@ svg { display: block; }
   margin-bottom: 20px;
 }
 .icon-badge.navy { background: var(--sky-100); color: var(--sky-700); }
-.icon-badge.green { background: rgba(22,163,74,0.12); color: var(--green-600); }
 
 .feature-card h3 { font-size: 19px; margin-bottom: 8px; }
 .feature-card p { font-size: 14.5px; margin-bottom: 0; }
@@ -520,7 +518,6 @@ svg { display: block; }
 .filter-bar .filter-btn { flex: 0 0 auto; white-space: nowrap; }
 .filter-btn {
   padding: 7px 12px;
-  font-size: 13px;
   border-radius: 999px;
   border: 1.5px solid var(--border);
   background: var(--surface);
@@ -574,18 +571,12 @@ svg { display: block; }
 .gallery-item[data-category="security"] { background: linear-gradient(135deg, var(--cat-security-1), var(--cat-security-2)); }
 .product-card[data-category="appliances"] .product-thumb,
 .gallery-item[data-category="appliances"] { background: linear-gradient(135deg, var(--cat-appliances-1), var(--cat-appliances-2)); }
-.product-card[data-category="fittings"] .product-thumb,
-.gallery-item[data-category="fittings"] { background: linear-gradient(135deg, var(--cat-fittings-1), var(--cat-fittings-2)); }
-.product-card[data-category="solar-stands"] .product-thumb,
-.gallery-item[data-category="solar-stands"] { background: linear-gradient(135deg, var(--cat-stands-1), var(--cat-stands-2)); }
-.product-card[data-category="vfd"] .product-thumb,
-.gallery-item[data-category="vfd"] { background: linear-gradient(135deg, var(--cat-vfd-1), var(--cat-vfd-2)); }
-.product-card[data-category="fans"] .product-thumb,
-.gallery-item[data-category="fans"] { background: linear-gradient(135deg, var(--cat-fans-1), var(--cat-fans-2)); }
-.product-card[data-category="wiring"] .product-thumb,
-.gallery-item[data-category="wiring"] { background: linear-gradient(135deg, var(--cat-wiring-1), var(--cat-wiring-2)); }
-.product-card[data-category="lighting"] .product-thumb,
-.gallery-item[data-category="lighting"] { background: linear-gradient(135deg, var(--cat-lighting-1), var(--cat-lighting-2)); }
+.product-card[data-category="fittings"] .product-thumb { background: linear-gradient(135deg, var(--cat-fittings-1), var(--cat-fittings-2)); }
+.product-card[data-category="solar-stands"] .product-thumb { background: linear-gradient(135deg, var(--cat-stands-1), var(--cat-stands-2)); }
+.product-card[data-category="vfd"] .product-thumb { background: linear-gradient(135deg, var(--cat-vfd-1), var(--cat-vfd-2)); }
+.product-card[data-category="fans"] .product-thumb { background: linear-gradient(135deg, var(--cat-fans-1), var(--cat-fans-2)); }
+.product-card[data-category="wiring"] .product-thumb { background: linear-gradient(135deg, var(--cat-wiring-1), var(--cat-wiring-2)); }
+.product-card[data-category="lighting"] .product-thumb { background: linear-gradient(135deg, var(--cat-lighting-1), var(--cat-lighting-2)); }
 
 .product-category-pill {
   position: absolute;
@@ -630,7 +621,7 @@ svg { display: block; }
 .product-body > p:not(.product-model-hint) { flex-grow: 1; margin-bottom: 10px; }
 .product-actions { display: flex; gap: 8px; margin-top: 0; }
 .product-actions .btn { flex: 1; margin-top: 0; }
-/* Still needed for cards whose button is a direct child (home page, related). */
+/* Still needed for cards whose button is a direct child (related, recent, saved). */
 .product-body > .btn { margin-top: auto; }
 
 /* ---------- Gallery ---------- */
@@ -683,6 +674,8 @@ svg { display: block; }
 }
 .lightbox-inner h3 { color: var(--ink-900); }
 .lightbox-inner svg { width: 120px; height: 120px; margin: 0 auto 20px; color: var(--amber-500); }
+.lightbox-inner img { display: block; width: 100%; max-height: 60vh; object-fit: contain; border-radius: var(--radius-md); margin: 0 0 20px; }
+.lightbox-inner img[hidden] { display: none; }
 .lightbox-close {
   position: absolute;
   top: 18px; right: 18px;
@@ -802,8 +795,7 @@ svg { display: block; }
   color: var(--ink-800);
 }
 .footer-social a:hover { background: var(--amber-500); color: var(--ink-900); border-color: var(--amber-500); }
-/* Same row of icons on the contact card — it is navy like the footer, so the
-   only change is centring it under the WhatsApp button. */
+/* Same row of icons on the contact card, centred under the WhatsApp button. */
 .contact-social { justify-content: center; margin-top: 20px; }
 .footer-bottom {
   border-top: 1px solid var(--sky-200);
@@ -927,7 +919,6 @@ svg { display: block; }
   .gallery-grid { grid-template-columns: 1fr; }
   .cta-banner { flex-direction: column; text-align: center; padding: 40px 28px; }
   .cta-actions { justify-content: center; }
-  .section { padding: 64px 0; }
   .form-card, .contact-info-card { padding: 28px; }
 }
 
@@ -1035,7 +1026,6 @@ svg { display: block; }
    ========================================================================== */
 .pdp-models { margin: 22px 0 6px; }
 .pdp-models h3 {
-  font-family: var(--font-head, inherit);
   font-size: 14px;
   font-weight: 800;
   text-transform: uppercase;
@@ -1056,10 +1046,10 @@ svg { display: block; }
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
-.pdp-model-chip:hover { border-color: var(--amber-500, #f5a623); transform: translateY(-1px); }
+.pdp-model-chip:hover { border-color: var(--amber-500); transform: translateY(-1px); }
 .pdp-model-chip.selected {
-  background: var(--sky-600, #3c7bbf);
-  border-color: var(--sky-600, #3c7bbf);
+  background: var(--sky-600);
+  border-color: var(--sky-600);
   color: #fff;
 }
 .pdp-model-note {
@@ -1069,7 +1059,7 @@ svg { display: block; }
   line-height: 1.55;
 }
 
-/* Brands stocked, shown on type-level cards (fans, lighting, cables) */
+/* Brand tag under the product title */
 .pdp-brands { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
 .pdp-brand-tag {
   font-size: 12.5px;
@@ -1163,7 +1153,7 @@ svg { display: block; }
 }
 .stat-item { display: flex; align-items: center; gap: 14px; }
 .stat-item svg { color: var(--amber-700); flex-shrink: 0; }
-.stat-num { font-family: var(--font-head, inherit); font-size: 24px; font-weight: 800; color: var(--ink-900); line-height: 1.1; }
+.stat-num { font-size: 24px; font-weight: 800; color: var(--ink-900); line-height: 1.1; }
 .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
 
 /* --- Photo tiles (gallery + recent installs) ----------------------------- */
@@ -1304,28 +1294,6 @@ svg { display: block; }
   .stat-label { font-size: 11.5px; line-height: 1.35; }
 }
 
-/* ---------- Category heading badge showing a real product photo ----------
-   Replaces the flat line icon on the home page category blocks. A cropped
-   photo of something we actually stock reads as a real shop, not clip-art. */
-.icon-badge.photo {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  overflow: hidden;
-  padding: 0;
-  flex-shrink: 0;
-}
-.icon-badge.photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 5px;
-  background: #fff;
-  display: block;
-}
-/* If the photo is missing, the icon underneath shows through instead. */
-.icon-badge.photo img.img-failed { display: none; }
-.icon-badge.photo:has(img:not(.img-failed)) > svg { display: none; }
-
 /* ==========================================================================
    PAGE-HERO SLIDESHOW
    Same treatment as the single-photo page heroes, but the image crossfades
@@ -1432,7 +1400,7 @@ svg { display: block; }
   .product-body p { font-size: 12.5px; }
   .product-model-hint { font-size: 11.5px; }
 
-  /* Products (.grid-4) stay two-up — compact cards, and 69 of them. But the
+  /* Products (.grid-4) stay two-up — compact cards, and hundreds of them. But the
      service/feature cards (.grid-3) carry a photo, a heading and a paragraph
      each, which truncates badly at ~160px. Those go full width. */
   .grid-3 { grid-template-columns: 1fr; }
@@ -1449,7 +1417,7 @@ svg { display: block; }
 
 @media (max-width: 340px) {
   /* Only the very narrowest phones drop to one column. 360px and 390px keep
-     two, which is the norm for a catalog this size — 69 products in a single
+     two, which is the norm for a catalog this size — hundreds of products in a single
      column is a punishing scroll. */
   .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .logo { font-size: 16px; }
@@ -1843,6 +1811,14 @@ body.intro-revealing .hero-inner > *:nth-child(6) { animation-delay: 0.40s; }
   margin: 0 0 10px;
 }
 .card-warranty svg { flex-shrink: 0; }
+
+.pdp-photo-note {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.pdp-photo-note[hidden] { display: none; }
 
 .pdp-warranty {
   display: flex;

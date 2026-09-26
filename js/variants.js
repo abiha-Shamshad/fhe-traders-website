@@ -34,87 +34,12 @@
 // ==========================================================================
 
 // --------------------------------------------------------------------------
-// Electrical fittings: each item is its own product.
-// image keys point at files in images/products/variants/
-// --------------------------------------------------------------------------
-const FITTING_ITEMS = {
-  "1-Gang Switch": {
-    img: "switch-1gang",
-    desc: "A single rocker on one plate — one light or fan point. The standard switch for a bedroom light, a stair light or any single point fed from its own box.",
-  },
-  "2-Gang Switch": {
-    img: null,   // no accurate stock shot — falls back to the brand photo
-    desc: "Two rockers on a single plate, so two points are controlled from one box — a room light plus its fan, or a light plus an outside light.",
-  },
-  "3-Gang Switch": {
-    img: "switch-3gang",
-    desc: "Three rockers on one plate. Common at a room entrance where the ceiling light, the fan and a side light are all switched from the same position.",
-  },
-  "5-Gang Board": {
-    img: "board-multigang",
-    desc: "A five-way board for a room that needs several points switched together — lights, fan and sockets on one plate rather than three separate boxes.",
-  },
-  "6-Gang Board": {
-    img: "board-multigang",
-    desc: "Six ways on one board. Usually the main plate in a living room or shop counter, where everything in the space is switched from one place.",
-  },
-  "5A Socket": {
-    img: "socket-5a",
-    desc: "A light-duty 5A outlet for lamps, phone chargers, a TV or a router. Not intended for heating or motor loads — use the 15A socket for those.",
-  },
-  "15A Power Socket": {
-    img: "socket-15a",
-    desc: "A heavy-duty 15A outlet for air conditioners, water heaters, irons and pump motors. Run it on its own properly-rated circuit and breaker.",
-  },
-  "2-Pin Socket": {
-    img: "socket-5a",
-    desc: "A two-pin outlet for small unearthed appliances and chargers. For anything with a metal body or a motor, use a 3-pin earthed socket instead.",
-  },
-  "3-Pin Socket": {
-    img: "socket-3pin",
-    desc: "A three-pin earthed outlet — the right choice for anything with a metal body or a motor, because the earth pin gives a fault path away from the user.",
-  },
-  "Fan Dimmer / Regulator": {
-    img: "fan-regulator",
-    desc: "Controls ceiling fan speed from the wall plate. Electronic regulators run cooler and waste less than the old resistive type, and fit a standard gang position.",
-  },
-  "Bell Push": {
-    img: "bell-push",
-    desc: "A momentary push for a door bell or buzzer — it makes contact only while pressed, so nothing is left switched on.",
-  },
-  "TV & Telephone Outlet": {
-    img: null,   // no accurate stock shot — falls back to the brand photo
-    desc: "A faceplate carrying TV aerial and telephone connections, so signal cabling terminates neatly at the wall instead of hanging loose behind furniture.",
-  },
-  "Switch-Socket Combined Board": {
-    img: "board-multigang",
-    desc: "A switch and socket sharing one plate, with the switch controlling the outlet. Handy where an appliance should be isolated without unplugging it.",
-  },
-  "Blank Plate": {
-    img: null,   // no accurate stock shot — falls back to the brand photo
-    desc: "Closes off a box that isn't in use — either kept for a future point or left over after a change. It keeps live terminals covered and the wall tidy.",
-  },
-  "Lamp Holder": {
-    img: "lamp-holder",
-    desc: "A batten or pendant holder for a bulb, in the standard B22 bayonet fitting. Ceiling or wall mounted, and it takes any of the LED bulbs we stock.",
-  },
-  "3-Pin Plug Top": {
-    img: null,   // no accurate stock shot — falls back to the brand photo
-    desc: "A rewireable three-pin plug for fitting to appliance flex. Screw terminals mean a damaged plug can be replaced without cutting the cable short.",
-  },
-};
-
-// --------------------------------------------------------------------------
 // Model shape helpers
 //
 // `models` entries are either a plain label string or an object carrying that
-// variant's own photo and specs. Everything downstream — the grid chips, the
-// detail page, search — goes through these two so neither shape leaks out.
+// variant's own photo and specs. modelLabel() lives in js/products-data.js,
+// which every page loads; normalizeModel() fills in the object shape here.
 // --------------------------------------------------------------------------
-function modelLabel(m) {
-  return (m && typeof m === "object") ? String(m.label || "") : String(m == null ? "" : m);
-}
-
 function normalizeModel(m) {
   if (m && typeof m === "object") {
     return {
@@ -288,17 +213,6 @@ function getVariantInfo(product, model) {
     specs: ownSpecs || out.specs || null,
   });
 
-  // Fittings: each item is a distinct product with its own photo
-  if (cat === "fittings") {
-    const item = FITTING_ITEMS[label];
-    if (item) {
-      return merge({
-        desc: item.desc,
-        image: item.img ? "images/products/variants/" + item.img + ".jpg" : null,
-      });
-    }
-  }
-
   if (cat === "solar-stands") return merge({ desc: STAND_DESC[label] || null, image: null });
   if (cat === "vfd") return merge({ desc: vfdDesc(label), image: null });
   if (cat === "wiring") return merge({ desc: cableDesc(label), image: null });
@@ -359,8 +273,3 @@ function getVariantInfo(product, model) {
   return merge({ desc: null, image: null });
 }
 
-// Expose for products.html, product.html and search.js
-window.getVariantInfo = getVariantInfo;
-window.modelLabel = modelLabel;
-window.normalizeModel = normalizeModel;
-window.findModel = findModel;
